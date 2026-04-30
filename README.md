@@ -1,6 +1,6 @@
-# CoralRemote Production Candidate
+# CoralRemote Methodology
 
-This repository candidate contains the current active methodology pipeline first.
+This repository contains the code-only production methodology pipeline for coral reef bleaching analysis using a log-ratio workflow.
 
 ## What is included
 
@@ -19,11 +19,31 @@ This repository candidate contains the current active methodology pipeline first
 - manuscript-output scripts
 - machine-local configuration
 
-## Current state
+## Entry Point
 
-This folder is a GitHub publication candidate, not the final published repository yet.
+- main runner: `code/RunAll_LogRatio.m`
+- shared runner: `code/RunAll_LogRatio_Mode.m`
+- preprocessing entry point: `code/01_preprocessing/Preprocess_Run.m`
 
-The main production path is now reorganized and locally configurable:
+All required runtime notes are maintained in the comment header of `code/RunAll_LogRatio.m`.
+
+## Requirements
+
+- MATLAB
+- local configuration file based on `config/paths_example.m`
+- local external data stored outside this repository
+- local geospatial support needed by the MATLAB pipeline
+- Python/Conda environment for `code/01_preprocessing/Coreg_AROSICS_runner.m` if AROSICS-based coregistration is used
+
+## Tested Environment
+
+- tested on `MATLAB R2025a`
+- tested on `Windows`
+- full methodology pipeline execution-tested on the local workstation used to prepare this repository
+
+## Repository Structure
+
+The main production path is organized and locally configurable:
 
 - `code/01_preprocessing`
 - `code/02_baseline_construction`
@@ -35,7 +55,7 @@ The main production path is now reorganized and locally configurable:
 The production runner and the main methodology sections no longer depend on private machine-root defaults.
 The current public candidate has no remaining machine-root references in code or docs.
 
-## Expected local setup
+## Local Setup
 
 The production code should run against local data that is stored outside the repository.
 
@@ -44,17 +64,13 @@ The repository uses:
 - a public config template in `config/paths_example.m`
 - a machine-local config file in `config/paths_local.m`
 
-## Publishing rule
+## Publishing Rule
 
 Do not add RAW imagery, processed `.mat` datasets, generated outputs, or local archives to this repository.
-
-
-
 
 ## Sample Folder
 
 - sample/ contains lightweight public examples only and must not contain real imagery, real .mat products, or private run outputs.
-
 
 ## Processed Examples
 
