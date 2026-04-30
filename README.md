@@ -27,12 +27,27 @@ This repository contains the code-only production methodology pipeline for coral
 
 All required runtime notes are maintained in the comment header of `code/RunAll_LogRatio.m`.
 
+## Quick Start
+
+1. create `config/paths_local.m` from `config/paths_example.m`
+2. point it to your local data and output roots
+3. review `code/RunAll_LogRatio.m`
+4. run `code/RunAll_LogRatio.m`
+
+Detailed setup:
+
+- `docs/INSTALLATION.md`
+
 ## Requirements
 
 - MATLAB
+- Mapping Toolbox
+- Statistics and Machine Learning Toolbox
+- Parallel Computing Toolbox
 - local configuration file based on `config/paths_example.m`
 - local external data stored outside this repository
 - local geospatial support needed by the MATLAB pipeline
+- Image Processing Toolbox is likely needed depending on workflow details
 - Python/Conda environment for `code/01_preprocessing/Coreg_AROSICS_runner.m` if AROSICS-based coregistration is used
 
 ## Tested Environment
@@ -63,6 +78,11 @@ The repository uses:
 
 - a public config template in `config/paths_example.m`
 - a machine-local config file in `config/paths_local.m`
+
+Additional setup detail:
+
+- `docs/LOCAL_SETUP.md`
+- `docs/INSTALLATION.md`
 
 ## Publishing Rule
 

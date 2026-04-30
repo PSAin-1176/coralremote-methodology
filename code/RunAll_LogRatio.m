@@ -17,6 +17,15 @@
 %   - MATLAB R2025a
 %   - Windows
 %
+% REQUIRED MATLAB PRODUCTS
+%   - MATLAB
+%   - Mapping Toolbox
+%   - Statistics and Machine Learning Toolbox
+%   - Parallel Computing Toolbox
+%
+% LIKELY NEEDED DEPENDING ON WORKFLOW
+%   - Image Processing Toolbox
+%
 % DATA BOUNDARY
 %   This repository is code only.
 %   Do not add PlanetScope RAW data, processed .mat datasets,
