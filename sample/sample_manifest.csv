@@ -1,0 +1,5 @@
+item,description
+sample_manifest.csv,Example manifest with fake filenames and dates
+sample_dates.txt,Small date list for dry-run examples
+sample_folder_tree.txt,Example local data directory layout outside Git
+sample_config_notes.md,Notes linking sample names to local config fields
