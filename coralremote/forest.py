@@ -1,0 +1,97 @@
+"""Numpy evaluator for frozen MATLAB ``TreeBagger`` classification forests.
+
+A forest is a list of :class:`Tree` objects holding the arrays MATLAB's
+``CompactClassificationTree`` stores (1-based in MATLAB, 0-based here):
+
+* ``cut_var``    (n_nodes,)  predictor index of the split, -1 for a leaf
+* ``cut_point``  (n_nodes,)  split value; ``x < cut_point`` goes left
+* ``children``   (n_nodes, 2) left/right child, -1 for a leaf
+* ``class_prob`` (n_nodes, n_classes) class posterior at each node
+
+``predict`` returns MATLAB's ``[label, score]``: the score is the mean of
+the leaf class probabilities over trees (equal tree weights), and the label
+is the class with the largest score (first one on ties, like ``max``).
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+import numpy as np
+
+
+@dataclass
+class Tree:
+    cut_var: np.ndarray
+    cut_point: np.ndarray
+    children: np.ndarray
+    class_prob: np.ndarray
+
+    def leaf_index(self, X):
+        X = np.asarray(X)
+        node = np.zeros(X.shape[0], np.int64)
+        rows = np.arange(X.shape[0])
+        active = self.cut_var[node] >= 0
+        while active.any():
+            idx = rows[active]
+            nd = node[idx]
+            xv = X[idx, self.cut_var[nd]].astype(np.float64)
+            cp = self.cut_point[nd]
+            # MATLAB: x < cut -> left; NaN predictors stop at the node
+            go_left = xv < cp
+            nan = np.isnan(xv)
+            nxt = np.where(go_left, self.children[nd, 0], self.children[nd, 1])
+            nxt = np.where(nan, nd, nxt)
+            node[idx] = nxt
+            active = np.zeros_like(active)
+            active[idx] = (~nan) & (self.cut_var[nxt] >= 0)
+        return node
+
+    def predict_proba(self, X):
+        return self.class_prob[self.leaf_index(X)]
+
+
+@dataclass
+class Forest:
+    trees: list
+    class_names: tuple          # e.g. ('1', '2'); labels returned as ints when numeric
+
+    def predict(self, X):
+        X = np.asarray(X)
+        score = np.zeros((X.shape[0], len(self.class_names)), np.float64)
+        for t in self.trees:
+            score += t.predict_proba(X)
+        score /= len(self.trees)
+        k = np.argmax(score, axis=1)
+        labels = np.array([int(c) for c in self.class_names])[k]
+        return labels, score
+
+    def save_npz(self, path):
+        """Compact, MATLAB-free copy of the forest (for tests / Py4 comparison)."""
+        d = {"class_names": np.array(self.class_names), "n_trees": len(self.trees)}
+        for i, t in enumerate(self.trees):
+            d[f"t{i}_cut_var"] = t.cut_var
+            d[f"t{i}_cut_point"] = t.cut_point
+            d[f"t{i}_children"] = t.children
+            d[f"t{i}_class_prob"] = t.class_prob
+        np.savez_compressed(path, **d)
+
+    @classmethod
+    def load_npz(cls, path):
+        z = np.load(path, allow_pickle=False)
+        trees = [Tree(z[f"t{i}_cut_var"], z[f"t{i}_cut_point"], z[f"t{i}_children"],
+                      z[f"t{i}_class_prob"]) for i in range(int(z["n_trees"]))]
+        return cls(trees, tuple(str(c) for c in z["class_names"]))
+
+
+def tree_from_matlab(cut_predictor_idx, cut_point, children, class_prob):
+    """Build a :class:`Tree` from MATLAB 1-based arrays.
+
+    ``cut_predictor_idx``: 1-based predictor index per node, 0 for leaves.
+    ``children``: (n, 2) 1-based child node ids, 0 for leaves.
+    """
+    cv = np.asarray(cut_predictor_idx, np.int64).ravel() - 1
+    ch = np.asarray(children, np.int64).reshape(-1, 2) - 1
+    leaf = ch[:, 0] < 0
+    cv[leaf] = -1
+    return Tree(cv, np.asarray(cut_point, np.float64).ravel(), ch,
+                np.asarray(class_prob, np.float64).reshape(len(cv), -1))

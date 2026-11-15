@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "coralremote"
+version = "0.1.0.dev0"
+description = "PlanetScope coral bleaching pipeline (Python port of the CoralRemote MATLAB methodology)"
+requires-python = ">=3.11"
+dependencies = ["numpy", "scipy", "h5py", "rasterio", "scikit-image", "scikit-learn"]
+
+[tool.setuptools]
+packages = ["coralremote"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = ["data: needs the frozen paper-of-record data under CORALREMOTE_ROOT"]
