@@ -52,3 +52,19 @@ def cache_dir() -> Path:
     assert_writable(d)
     d.mkdir(parents=True, exist_ok=True)
     return d
+
+# Paper Stage 1 run and the A3 pipeline outputs that survive (OneDrive copy of
+# C:\SAT\Data\Output_LogRatio\A3, made 5 Apr 2026; C:\SAT no longer exists).
+A3_ROOT = Path(os.environ.get(
+    "CORALREMOTE_A3_ROOT",
+    "E:/OneDrive - Chulalongkorn University/2026/ReefCode/Manuscript/Resources/source_V15/Data/Output_LogRatio/A3"))
+STAGE1_RUN = A3_ROOT / "Phase_Stage1" / "run_20260401_170150"
+STAGE1_MODEL = STAGE1_RUN / "rf_stage1_model.mat"
+STAGE1_REPORT = STAGE1_RUN / "stage1_report.txt"
+PHASE3_GLINT_DIR = A3_ROOT / "Phase3_LogRatio" / "run_20260401_102508"
+REEF_MASK_TIF = A3_ROOT / "Phase2_Masking" / "run_20260401_102458" / "reef_mask.tif"
+STAGE1_LABELS = {"train": ASSET / "TrainingStage1.geojson", "test": ASSET / "TestingStage1.geojson"}
+READ_ONLY_DIRS = READ_ONLY_DIRS + (A3_ROOT,)
+# Raw PlanetScope scenes + UDM2 (removable backup drive; may be absent).
+RAW_PLANET_DIR = Path(os.environ.get("CORALREMOTE_RAW_PLANET", "F:/Work_Backup/SAT/Data"))
+READ_ONLY_DIRS = READ_ONLY_DIRS + (RAW_PLANET_DIR,)

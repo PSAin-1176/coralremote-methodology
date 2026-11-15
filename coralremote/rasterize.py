@@ -96,12 +96,31 @@ def extract_rings(geom):
     return rings
 
 
-def feature_pixels(feature, ref):
-    """0-based (rows, cols) MATLAB would set for one label feature."""
+def feature_pixels(feature, ref, rule="stage2"):
+    """0-based (rows, cols) MATLAB would set for one label feature.
+
+    rule='stage2': ``round((x - xmin)/cw) + 1``; vertices outside the grid
+        are dropped (``rasterizeSingleFeature`` in the Stage 2 script).
+    rule='stage1': ``round((x - xmin)/cw + 0.5)`` clamped to the grid; rings
+        with < 3 vertices skipped (local ``rasterizeGeoJSONLabels`` in
+        ``Train_Stage1_LogRatio.m``). This is half a pixel different from
+        the Stage 2 rule; both are kept as-is for parity.
+    """
     H, W = ref.height, ref.width
     rr_all, cc_all = [], []
     for ring in extract_rings(feature["geometry"]):
+        if rule == "stage1" and ring.shape[0] < 3:
+            continue
         xu, yu = latlon2utm47(ring[:, 1], ring[:, 0])
+        if rule == "stage1":
+            cw = (ref.x_min + W * ref.cell_x - ref.x_min) / W
+            ch = (ref.y_max - (ref.y_max - H * ref.cell_y)) / H
+            col = np.clip(mround((xu - ref.x_min) / cw + 0.5), 1, W)
+            row = np.clip(mround((ref.y_max - yu) / ch + 0.5), 1, H)
+            rr, cc = poly2mask_indices(col, row, H, W)
+            rr_all.append(rr)
+            cc_all.append(cc)
+            continue
         col = mround((xu - ref.x_min) / ref.cell_x) + 1
         row = mround((ref.y_max - yu) / ref.cell_y) + 1
         valid = (col >= 1) & (col <= W) & (row >= 1) & (row <= H)
@@ -135,5 +154,25 @@ def rasterize_date_labels(features, ref, class_to_id, date):
             continue
         free = label[rr, cc] == 0
         label[rr[free], cc[free]] = class_to_id[cls]
+        mask[rr, cc] = True
+    return mask, label
+
+
+def rasterize_labels_stage1(features, ref, class_map):
+    """Port of the Stage 1 ``rasterizeGeoJSONLabels``: all features (no
+    date filter), first writer wins, ``class_map`` e.g. {'HC':1,'SND':2,'RBL':3}."""
+    H, W = ref.height, ref.width
+    mask = np.zeros((H, W), bool)
+    label = np.zeros((H, W), np.uint8)
+    for f in features:
+        p = f["properties"]
+        cls = p.get("Class", p.get("class"))
+        if cls not in class_map:
+            continue
+        rr, cc = feature_pixels(f, ref, rule="stage1")
+        if rr.size == 0:
+            continue
+        free = label[rr, cc] == 0
+        label[rr[free], cc[free]] = class_map[cls]
         mask[rr, cc] = True
     return mask, label

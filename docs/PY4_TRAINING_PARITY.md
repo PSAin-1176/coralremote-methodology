@@ -41,3 +41,47 @@ cd E:/CoralRemote/coralremote-python
 PYTHONPATH=. python scripts/run_py4_train.py --seeds 0 1 2 3 4                  # matlab_cart, ~75 s/seed
 PYTHONPATH=. python scripts/run_py4_train.py --seeds 0 1 2 3 4 --engine sklearn  # ~7 s/seed
 ```
+
+---
+
+# Stage 1 (substrate CORAL / SND / RBL): Py2–Py4
+
+Paper run: `ReefCode/.../A3/Phase_Stage1/run_20260401_170150` (OneDrive copy; the original `C:\SAT` is gone). Script: `Code/Train_Stage1_LogRatio.m`. Stage 1 read Phase 5 features built from **true** reflectance on 1 Apr, so the Stage 2 double-scaling bug doesn't affect it.
+
+## Inputs rebuilt (Py2): `coralremote/preprocess.py`
+The paper's `FEATURES_<date>.tif` files were lost, so they are rebuilt from code and the A3 config (`pipeline_logratio_config.mat`):
+- **Glint-corrected reflectance:** the surviving `GLINT_<date>.tif` files, otherwise the Source glint stack × 10,000.
+- **NaN masking**, in this order:
+  - any raw band ≤ 0;
+  - UDM2 `clear` = 0, read from the raw scenes on `F:\Work_Backup\SAT\Data`;
+  - wave pixels, where raw NIR > 0.07 inside the reef;
+  - everything outside the Phase 2 reef mask.
+- **Features:** B/G1, G1/G2, B/R, DII_BR = log B − 0.82 log R, DII_GR = log G1 − 0.80 log R, with EPS 1e-6.
+- **Label rasteriser:** the Stage 1 script has its own rasteriser, with a half-pixel offset and clamping that differ from Stage 2's. It is ported separately as `rule="stage1"`.
+
+**Check against the 17,372 training rows saved in the paper forest:** pixel counts and labels are identical (3,751 / 5,974 / 7,647). Ratio features are bit-identical where the GLINT tif survives and within 2.5e-7 otherwise; DII is within 7.2e-7, one float32 ulp of the log terms. The UDM2 mask matters on one date: 20230629, where it removes exactly the 120 light-haze test pixels.
+
+## Frozen model (Py3): exact
+| Item | Result |
+|---|---|
+| OOB error (from the saved per-tree OOB masks) | 0.1004 = report |
+| Secondary test (CORAL 20240408, SND/RBL 20230519; n = 905) | Confusion matrix identical; OA 0.7414, κ 0.5740 |
+| Cross-date transfer table (8 dates: n, OA, κ, CORAL P/R/F1) | All identical |
+
+**Prediction rule.** With the asymmetric cost `[0 2 2; 1 0 1; 1 1 0]`, MATLAB grows the trees under cost-adjusted priors, so the stored leaf probabilities already include the cost. Applying the cost again at prediction gives OOB 0.1041 and the wrong confusion matrix. `Forest.predict` maps the scores back to the original prior and then minimises expected cost. For these cost matrices that equals the argmax of the stored scores.
+
+## Retraining (Py4): MATLAB-rule CART with cost-adjusted class weights (3 seeds)
+| Metric | Paper | Python (seeds 0–2) |
+|---|---|---|
+| OOB error | 0.1004 | 0.1002–0.1016 |
+| Secondary OA / κ | 0.7414 / 0.574 | 0.7425–0.7448 / 0.576–0.580 |
+| Per-pixel agreement with the paper forest (reef, 8 dates) | — | 97.7–97.8% (worst date 96.9%) |
+| Transfer-table OA | — | within 0.01 of the paper on 6 dates; up to 0.03 on 20240317 and 20241111 |
+| Mean tree size (nodes) | 1,540 | 1,683–1,685 (+9%, open) |
+
+**Not ported (all retrain or are random):** the LOO CORAL-polygon check, the spatial-block holdout (100 trees each) and the k-means diagnostic. The tree-size gap is open. Stage 2 tree sizes match, so the likely cause is a detail of how MATLAB handles weighted (cost-adjusted) nodes, possibly its stopping rule. It doesn't change any reported metric beyond seed noise.
+
+```bash
+PYTHONPATH=. python scripts/run_frozen_stage1.py         # exact parity, ~30 s
+PYTHONPATH=. python scripts/run_py4_stage1.py --seeds 0 1 2   # ~3 min/seed
+```

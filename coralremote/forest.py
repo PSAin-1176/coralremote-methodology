@@ -54,16 +54,38 @@ class Tree:
 class Forest:
     trees: list
     class_names: tuple          # e.g. ('1', '2'); labels returned as ints when numeric
+    cost: np.ndarray = None     # (K, K) misclassification cost, rows = true class
+    prior: np.ndarray = None    # (K,) class prior given to TreeBagger (empirical)
 
     def predict(self, X):
+        """MATLAB ``predict``: mean leaf probabilities over trees.
+
+        With a non-0/1 ``Cost``, MATLAB grows the trees under cost-adjusted
+        priors (prior_j * sum_k Cost(j,k), normalised), so the stored leaf
+        probabilities already include the cost. The label is the expected-cost
+        minimiser after mapping the scores back to the original prior; for the
+        paper's cost matrices this equals the argmax of the stored scores.
+        Verified on Stage 1: OOB 0.1004 and the secondary-test confusion
+        matrix are reproduced (applying the cost a second time gives 0.1041).
+        """
         X = np.asarray(X)
         score = np.zeros((X.shape[0], len(self.class_names)), np.float64)
         for t in self.trees:
             score += t.predict_proba(X)
         score /= len(self.trees)
-        k = np.argmax(score, axis=1)
+        k = self._decide(score)
         labels = np.array([int(c) for c in self.class_names])[k]
         return labels, score
+
+    def _decide(self, score):
+        if self.cost is None or self.prior is None:
+            return np.argmax(score, axis=1)
+        C = np.asarray(self.cost, np.float64)
+        P = np.asarray(self.prior, np.float64).ravel()
+        padj = P * C.sum(axis=1)
+        padj = padj / padj.sum()
+        s = score * (P / padj)
+        return np.argmin(s @ C, axis=1)
 
     def save_npz(self, path):
         """Compact, MATLAB-free copy of the forest (for tests / Py4 comparison)."""
@@ -94,7 +116,7 @@ def _classlabel(o):
     return tuple(_str(c) for c in np.asarray(list(L), dtype=object).ravel())
 
 
-def load_treebagger(path, var, return_object=False):
+def load_treebagger(path, var, return_object=False, mat=None):
     """Read a saved MATLAB ``TreeBagger`` (classification) with ``mat-io``.
 
     Uses ``Compact.Trees{k}.Impl`` (TreeImpl: CutVar, CutPoint, Children,
@@ -103,7 +125,7 @@ def load_treebagger(path, var, return_object=False):
     """
     from matio import load_from_mat
 
-    obj = load_from_mat(str(path), variable_names=[var])[var]
+    obj = (mat or load_from_mat(str(path), variable_names=[var]))[var]
     props = obj.properties
     compact = props["Compact"].properties
     class_names = tuple(_str(c) for c in np.asarray(compact["ClassNames"]).ravel())
@@ -124,7 +146,9 @@ def load_treebagger(path, var, return_object=False):
                 full[:, class_names.index(c)] = prob[:, j]
             prob = full
         trees.append(tree_from_matlab(impl["CutVar"], impl["CutPoint"], impl["Children"], prob))
-    forest = Forest(trees, class_names)
+    cost = np.asarray(props["ClassSummary"]["Cost"].ravel()[0], np.float64)
+    prior = np.asarray(props["ClassSummary"]["Prior"].ravel()[0], np.float64).ravel()
+    forest = Forest(trees, class_names, cost if cost.size else None, prior if prior.size else None)
     return (forest, props) if return_object else forest
 
 
