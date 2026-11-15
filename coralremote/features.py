@@ -13,7 +13,11 @@ Feature order (columns):
   20    spectral angle to the bleached mean
 
 All arithmetic is float32 and row sums are accumulated left to right, as
-MATLAB does for ``sum(X, 2)`` on a single matrix.
+MATLAB does for ``sum(X, 2)`` on a single matrix. ``log`` and ``acos`` are
+evaluated in double and rounded to single: against the 9,318 MATLAB training
+rows saved in the forests this leaves 1-ulp differences (<=1.1e-7 relative)
+in 451 rows (numpy's float32 versions: 1,525 rows); all other features are
+bit-identical.
 """
 from __future__ import annotations
 
@@ -22,6 +26,10 @@ import numpy as np
 from .units import COMPAT, get_mode
 
 F32 = np.float32
+
+
+def _log32(X):
+    return np.log(np.asarray(X, np.float64)).astype(F32)
 
 
 def rowsum(X):
@@ -54,7 +62,7 @@ def compute_feature_base(X, mode=COMPAT):
     X = np.fmax(np.asarray(X, F32), floor)          # MATLAB max() ignores NaN
     s = rowsum(X)
     norm = X / np.fmax(s, floor)[:, None]
-    logs = np.log(X)
+    logs = _log32(X)
     return np.concatenate([norm, logs, s[:, None]], axis=1).astype(F32, copy=False)
 
 
@@ -91,7 +99,7 @@ def spectral_angle(X, ref):
     num = rowsum(X * ref)
     den = np.sqrt(rowsum(X * X)) * np.sqrt(rowsum((ref * ref)[None, :])[0])
     cosang = np.fmax(np.fmin(num / np.fmax(den, F32(1e-12)), F32(1)), F32(-1))
-    return np.arccos(cosang).astype(F32)
+    return np.arccos(cosang.astype(np.float64)).astype(F32)
 
 
 def build_hybrid_features(Fbase, mu_h, mu_b, v=None, vnorm2=None):

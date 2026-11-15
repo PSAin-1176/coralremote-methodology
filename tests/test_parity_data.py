@@ -66,3 +66,36 @@ def test_sample_counts(inputs):
     assert [int((inputs["Ytest"] == k).sum()) for k in (1, 2, 3)] == [7068, 831, 1279]
     assert len(inputs["anchors"]["healthy"][1]) == 1262
     assert len(inputs["anchors"]["bleached"][1]) == 434
+
+
+@pytest.fixture(scope="module")
+def frozen(inputs):
+    from coralremote.forest import load_treebagger
+    gate = load_treebagger(paths.STAGE2_OUTPUT, "rfGate")
+    stress = load_treebagger(paths.STAGE2_OUTPUT, "rfStress")
+    return stage2.run_frozen(gate, stress, inputs)
+
+
+@needs_data
+def test_frozen_test_predictions_identical(frozen):
+    ref = io.load_stage2_output()
+    assert np.array_equal(frozen["gate_pred"], ref["gatePredTest"])
+    assert np.array_equal(frozen["stress_pred"], ref["stressPredTest"])
+
+
+@needs_data
+def test_frozen_confusion_matrix_and_anchors(frozen):
+    from coralremote.evaluate import parse_report_confusion
+    C_ref = parse_report_confusion(paths.STAGE2_REPORT.read_text())
+    assert np.array_equal(frozen["metrics"]["C"], C_ref)
+    assert f"{frozen['metrics']['OA']:.6f}" == "0.974841"
+    assert f"{frozen['metrics']['kappa']:.6f}" == "0.934418"
+    assert (round(frozen["healthy_anchor_recall"], 4), frozen["n_healthy_anchor"]) == (0.8613, 1262)
+    assert (frozen["bleached_anchor_recall"], frozen["n_bleached_anchor"]) == (1.0, 434)
+
+
+@needs_data
+def test_frozen_table5_all_56_cells(frozen):
+    from coralremote.evaluate import compare_date_summary
+    n, bad, maxd, _ = compare_date_summary(frozen["date_summary"], io.read_date_summary_csv(), tol=1e-9)
+    assert (n, bad) == (56, 0)

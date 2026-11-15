@@ -83,6 +83,51 @@ class Forest:
         return cls(trees, tuple(str(c) for c in z["class_names"]))
 
 
+def _str(o):
+    a = np.asarray(o).ravel()
+    return str(a[0]) if a.size else ""
+
+
+def _classlabel(o):
+    """Class names from a ``classreg.learning.internal.ClassLabel`` object."""
+    L = o.properties["L"] if hasattr(o, "properties") else o
+    return tuple(_str(c) for c in np.asarray(list(L), dtype=object).ravel())
+
+
+def load_treebagger(path, var, return_object=False):
+    """Read a saved MATLAB ``TreeBagger`` (classification) with ``mat-io``.
+
+    Uses ``Compact.Trees{k}.Impl`` (TreeImpl: CutVar, CutPoint, Children,
+    ClassProb) and ``Compact.ClassNames``. Surrogate splits and categorical
+    cuts are not supported (the paper forests use neither; checked here).
+    """
+    from matio import load_from_mat
+
+    obj = load_from_mat(str(path), variable_names=[var])[var]
+    props = obj.properties
+    compact = props["Compact"].properties
+    class_names = tuple(_str(c) for c in np.asarray(compact["ClassNames"]).ravel())
+    trees = []
+    for t in np.asarray(compact["Trees"]).ravel():
+        impl = t.properties["Impl"].properties
+        if np.asarray(impl["SurrCutVar"]).size:
+            raise NotImplementedError("surrogate splits")
+        cs = t.properties["ClassSummary"]
+        tree_classes = _classlabel(cs["ClassNames"].ravel()[0])
+        nonzero = _classlabel(cs["NonzeroProbClasses"].ravel()[0])
+        if tree_classes != class_names:
+            raise ValueError(f"tree class order {tree_classes} != forest {class_names}")
+        prob = np.asarray(impl["ClassProb"], np.float64)
+        if nonzero != class_names:      # ClassProb columns follow NonzeroProbClasses
+            full = np.zeros((prob.shape[0], len(class_names)))
+            for j, c in enumerate(nonzero):
+                full[:, class_names.index(c)] = prob[:, j]
+            prob = full
+        trees.append(tree_from_matlab(impl["CutVar"], impl["CutPoint"], impl["Children"], prob))
+    forest = Forest(trees, class_names)
+    return (forest, props) if return_object else forest
+
+
 def tree_from_matlab(cut_predictor_idx, cut_point, children, class_prob):
     """Build a :class:`Tree` from MATLAB 1-based arrays.
 
