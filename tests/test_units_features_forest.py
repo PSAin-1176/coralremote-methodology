@@ -29,7 +29,7 @@ def test_compat_floor_binds_on_double_scaled_values():
     frac = fe.floored_fraction(R / SR_SCALE, COMPAT)
     # the 1e-6 floor on double-scaled data clips everything below 0.01 reflectance
     assert np.isclose(frac[7], (R[:, 7] < 0.01).mean(), atol=0.01) and frac[7] > 0.1
-    assert fe.floored_fraction(fe.prepare_spectra(X, FIXED), FIXED).max() == 0
+    assert fe.floored_fraction(fe.prepare_spectra(R / SR_SCALE, FIXED), FIXED).max() == 0
 
 
 def test_normalised_spectrum_scale_invariant_without_floor():
