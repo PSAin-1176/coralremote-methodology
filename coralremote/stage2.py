@@ -289,8 +289,9 @@ def prepare_frozen_inputs(opts=None, stack=None):
                 anchors=dict(healthy=(XaH, YaH), bleached=(XaB, YaB)))
 
 
-def run_frozen(gate, stress, inputs=None, mu_h=None, mu_b=None, opts=None):
-    """Evaluate the paper's frozen forests on Python-built features.
+def run_frozen(gate, stress, inputs=None, mu_h=None, mu_b=None, opts=None, return_maps=False):
+    """Evaluate two forests (the paper's frozen ones, or Py4-trained ones)
+    on Python-built features.
 
     ``mu_h``/``mu_b`` default to the Python-recomputed axis means; pass the
     saved MATLAB values to isolate the evaluator from the mean computation.
@@ -313,8 +314,12 @@ def run_frozen(gate, stress, inputs=None, mu_h=None, mu_b=None, opts=None):
     XaB, YaB = inputs["anchors"]["bleached"]
     pH, _, _ = hierarchical_predict(feats(XaH), gate, stress, opts)
     pB, _, _ = hierarchical_predict(feats(XaB), gate, stress, opts)
-    rows = classify_all_dates(view, support, mu_h, mu_b, gate, stress, opts)
-    return dict(metrics=metrics, pred=pred, gate_pred=gate_pred, stress_pred=stress_pred,
+    maps = None
+    if return_maps:
+        rows, maps = classify_all_dates(view, support, mu_h, mu_b, gate, stress, opts, return_maps=True)
+    else:
+        rows = classify_all_dates(view, support, mu_h, mu_b, gate, stress, opts)
+    return dict(maps=maps, metrics=metrics, pred=pred, gate_pred=gate_pred, stress_pred=stress_pred,
                 healthy_anchor_recall=float(np.mean(pH == YaH)), n_healthy_anchor=int(YaH.size),
                 bleached_anchor_recall=float(np.mean(pB == YaB)), n_bleached_anchor=int(YaB.size),
                 date_summary=rows)

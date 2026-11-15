@@ -99,3 +99,23 @@ def test_frozen_table5_all_56_cells(frozen):
     from coralremote.evaluate import compare_date_summary
     n, bad, maxd, _ = compare_date_summary(frozen["date_summary"], io.read_date_summary_csv(), tol=1e-9)
     assert (n, bad) == (56, 0)
+
+
+@needs_data
+@pytest.mark.slow
+def test_py4_training_parity_one_seed(inputs, frozen):
+    """Py4: MATLAB-rule CART trained on the paper's rows (seed 1, ~75 s)."""
+    from coralremote.train import train_stage2
+    g, s, ts = train_stage2(inputs, 1)
+    assert len(ts["ygate"]) == 6000 and len(ts["ystress"]) == 3318
+    r = stage2.run_frozen(g, s, inputs, return_maps=True)
+    assert abs(r["metrics"]["OA"] - frozen["metrics"]["OA"]) < 0.01
+    ref_maps = stage2.run_frozen(*_frozen_forests(), inputs, return_maps=True)["maps"]
+    sup = inputs["support"]
+    agree = np.mean([(r["maps"][d][sup] == ref_maps[d][sup]).mean() for d in ref_maps])
+    assert agree >= 0.97
+
+
+def _frozen_forests():
+    from coralremote.forest import load_treebagger
+    return (load_treebagger(paths.STAGE2_OUTPUT, "rfGate"), load_treebagger(paths.STAGE2_OUTPUT, "rfStress"))
