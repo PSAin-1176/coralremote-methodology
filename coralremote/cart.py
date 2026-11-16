@@ -92,6 +92,11 @@ def grow_tree(X, y, min_leaf=5, min_parent=10, classes=(1, 2), class_weight=None
         _, j, cut = s
         left = idx[X[idx, j] < cut]
         right = idx[X[idx, j] >= cut]
+        if len(left) == 0 or len(right) == 0:
+            # Rare: two neighbouring float32 values whose single-precision
+            # midpoint rounds onto one of them, so the cut sends every row
+            # one way. Splitting again would loop forever; keep it a leaf.
+            continue
         cut_var[k], cut_pt[k] = j, float(cut)
         kl = new_node(left)
         kr = new_node(right)

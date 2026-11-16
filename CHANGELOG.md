@@ -26,9 +26,13 @@
 - Unit contract: `assert_reflectance` on load; scale-invariance and NIR-identity tests.
 - Regression tile (P8): 400 pixels × 14 dates, built locally; aggregate golden values in `tests/golden/`.
 - Machine-local paths via the git-ignored `paths.local.json` (template `paths.example.json`) or environment variables.
+- Py8 seed-sensitivity diagnosis (`docs/PY8_SEED_SENSITIVITY.md`, `scripts/run_py8_*.py`).
+
+### Fixed: endless loop in tree growing
+- When a node's two lowest values were neighbouring single-precision numbers, their midpoint could round onto the lower one. That cut sent no rows left, and the node split the same way forever. Seen once, in a 1,000-tree fixed-units stress forest. Such a node is now a leaf. The guard only acts where growth never finished before, so no earlier result changes.
 
 ### Known limitations
-- Retraining isn't bit-identical to MATLAB, because MATLAB's random stream can't be reproduced. On 20240514 and 20250518 the PLE/UNK split varies 17–30 pp between seeds even within MATLAB-rule training. Report those dates as seed means.
+- Retraining isn't bit-identical to MATLAB, because MATLAB's random stream can't be reproduced. On 20240514 and 20250518 the PLE/UNK split varies 17–30 pp between seeds even within MATLAB-rule training. Py8 traces 20240514 to bootstrap noise in the stress model near the 0.55 cut (more trees or seed averaging narrow it). 20250518 depends on the gate's training-row draw and is outside the training range on `axis_t` (more trees don't help). Report 20240514 as a seed mean with its range and 20250518 as a range.
 - Stage 1 trees grown in Python are about 9% larger than MATLAB's. This doesn't change any metric beyond seed noise.
 - Not ported:
   - co-registration (AROSICS);
