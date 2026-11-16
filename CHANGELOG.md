@@ -12,7 +12,7 @@
 - The previous MATLAB pipeline moved unchanged to `legacy/matlab/`. It is frozen.
 
 ### Fixed: reflectance double-scaling in the Stage 2 inputs
-- The source stacks used for the AJSTR Stage 2 analysis (built 5 Apr 2026) divided PlanetScope SR by 10,000 twice. The bare 1e-6 feature floor therefore acted as a 0.01-reflectance floor and flattened most NIR values on several dates (up to 84% of coral-mask pixels on 20240307).
+- The source stacks used for the AJSTR Stage 2 analysis (built 5 Apr 2026) divided PlanetScope SR by 10,000 twice. The bare 1e-6 feature floor therefore acted as a 0.01-reflectance floor and clipped NIR on 23–84% of coral-mask pixels on five dates (most on 20240307).
 - New default: true reflectance with an explicit 1e-4 floor (`units.FIXED`). `units.COMPAT` reproduces the paper-of-record behaviour for comparison only.
 - Effect on the paper's Stage 2 results (5 seeds, same procedure):
   - OA 0.9709 vs 0.9748;

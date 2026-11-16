@@ -100,11 +100,11 @@ Other dates:
 
 Per-pixel agreement, fixed vs paper units for the same seed, averaged over all 14 dates, is 95.7%. The lowest dates are 20250518 (73.9%), 20240514 (88.1%) and 20240620 (91.2%).
 
-**Reading.** NIR and red-edge were flattened to the floor on most pixels on several dates. Restoring them changes the curated PLE set and sharpens the stress model's PLE/BLD boundary:
+**Reading.** The old floor clipped NIR on 23–84% of mask pixels on five dates (most on 20240307 and 20240926) and red-edge on up to 60% (20240307). Restoring them changes the curated PLE set and sharpens the stress model's PLE/BLD boundary:
 - 20240620 reads more bleached (BLD +4.7 pp);
 - 20240514 gives fewer low-confidence (UNK) pixels, which go to PLE instead.
 
-That last point supports the R1 framing that UNK on 20240514 isn't evidence of out-of-domain spectra. 20250518 stays seed-unstable in both units, so its Table 5 row should be reported as a mean over seeds in any re-run.
+Py8 shows that 20240514 is not out of domain: its UNK pixels sit near the stress model's 0.55 cut ([PY8](PY8_SEED_SENSITIVITY.md)). 20250518 stays seed-unstable in both units, so its Table 5 row should be reported as a mean over seeds in any re-run.
 
 ## Reproduce
 ```bash

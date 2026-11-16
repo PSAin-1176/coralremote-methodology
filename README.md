@@ -31,7 +31,7 @@ Where each MATLAB script is reproduced: [docs/PROVENANCE.md](docs/PROVENANCE.md)
 ## Units and known issue
 All arrays are surface reflectance on a 0–1 scale. Reflectance features use an explicit floor of 1e-4 reflectance (`units.FIXED`). Details and Methods wording: [docs/UNITS.md](docs/UNITS.md).
 
-The source stacks behind the AJSTR paper (built 5 Apr 2026) divided reflectance by 10,000 twice. The 1e-6 floor in Stage 2 then acted as a 0.01 reflectance floor and flattened most NIR values on several dates. `units.COMPAT` reproduces that behaviour exactly, for parity only. Re-running with correct units:
+The source stacks behind the AJSTR paper (built 5 Apr 2026) divided reflectance by 10,000 twice. The 1e-6 floor in Stage 2 then acted as a 0.01 reflectance floor and clipped NIR on 23–84% of coral-mask pixels on five dates. `units.COMPAT` reproduces that behaviour exactly, for parity only. Re-running with correct units:
 - leaves OA (−0.4 pp), F1 (≤ 0.015) and every date's dominant class unchanged;
 - moves some Table 5 cells by more than 2 pp, for example 20240620 BLD +4.7 pp and 20240514 PLE +9 pp / UNK −9 pp.
 
