@@ -1,0 +1,38 @@
+# Changelog
+
+## 1.0.0 (release candidate 1.0.0rc1, 16 Nov 2026; not yet tagged or published)
+
+### Python becomes the maintained implementation
+- New package `coralremote/`: Stage 1, the baseline coral mask, Stage 2 (hierarchical, curated PLE), the wave FFT diagnostic, and a TreeBagger-compatible random forest (MATLAB split rules) with a reader for saved MATLAB models.
+- Verified against the AJSTR paper-of-record runs before any fix:
+  - Table 5 and the Stage 2 confusion matrix are exact;
+  - Stage 1 OOB, test and transfer results are exact;
+  - the baseline mask is exact to 0 px;
+  - all 14 wave verdicts match.
+- The previous MATLAB pipeline moved unchanged to `legacy/matlab/`. It is frozen.
+
+### Fixed: reflectance double-scaling in the Stage 2 inputs
+- The source stacks used for the AJSTR Stage 2 analysis (built 5 Apr 2026) divided PlanetScope SR by 10,000 twice. The bare 1e-6 feature floor therefore acted as a 0.01-reflectance floor and flattened most NIR values on several dates (up to 84% of coral-mask pixels on 20240307).
+- New default: true reflectance with an explicit 1e-4 floor (`units.FIXED`). `units.COMPAT` reproduces the paper-of-record behaviour for comparison only.
+- Effect on the paper's Stage 2 results (5 seeds, same procedure):
+  - OA 0.9709 vs 0.9748;
+  - F1 within 0.015;
+  - dominant class unchanged on every date;
+  - some class fractions move by more than 2 pp: 20240620 BLD +4.7 pp, and on 20240514 PLE +9 pp / UNK −9 pp.
+- Stage 1, the baseline mask, the wave diagnostic and the label polygons aren't affected.
+- The earlier public MATLAB code (now `legacy/matlab/`) never had this bug: it divides once, on GeoTIFF input.
+
+### Added
+- Unit contract: `assert_reflectance` on load; scale-invariance and NIR-identity tests.
+- Regression tile (P8): 400 pixels × 14 dates, built locally; aggregate golden values in `tests/golden/`.
+- Machine-local paths via the git-ignored `paths.local.json` (template `paths.example.json`) or environment variables.
+
+### Known limitations
+- Retraining isn't bit-identical to MATLAB, because MATLAB's random stream can't be reproduced. On 20240514 and 20250518 the PLE/UNK split varies 17–30 pp between seeds even within MATLAB-rule training. Report those dates as seed means.
+- Stage 1 trees grown in Python are about 9% larger than MATLAB's. This doesn't change any metric beyond seed noise.
+- Not ported:
+  - co-registration (AROSICS);
+  - the autolabel scripts (frozen labels are used);
+  - Stage 1 leave-one-polygon-out and spatial-block checks;
+  - k-means diagnostics;
+  - figure scripts.

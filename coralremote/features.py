@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from .units import COMPAT, get_mode
+from .units import COMPAT, FIXED, get_mode
 
 F32 = np.float32
 
@@ -41,7 +41,7 @@ def rowsum(X):
     return acc
 
 
-def prepare_spectra(X, mode=COMPAT):
+def prepare_spectra(X, mode=FIXED):
     """Bring stored stack values to the feature scale of ``mode``.
 
     compat: values untouched (double-scaled stack, as in the paper).
@@ -54,7 +54,7 @@ def prepare_spectra(X, mode=COMPAT):
     return X
 
 
-def compute_feature_base(X, mode=COMPAT):
+def compute_feature_base(X, mode=FIXED):
     """[normSpec(8), logSpec(8), brightness(1)] from (n, 8) spectra that are
     already on the ``mode`` scale (see :func:`prepare_spectra`)."""
     mode = get_mode(mode)
@@ -66,7 +66,7 @@ def compute_feature_base(X, mode=COMPAT):
     return np.concatenate([norm, logs, s[:, None]], axis=1).astype(F32, copy=False)
 
 
-def floored_fraction(X, mode=COMPAT):
+def floored_fraction(X, mode=FIXED):
     """Per-band fraction of values that the floor of ``mode`` raises."""
     mode = get_mode(mode)
     X = np.asarray(X, F32)

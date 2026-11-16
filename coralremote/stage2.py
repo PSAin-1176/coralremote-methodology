@@ -17,7 +17,7 @@ from .features import (axis_vector, build_hybrid_features, compute_feature_base,
                        prepare_spectra, project_to_axis, rowsum)
 from .matlab_compat import find_colmajor, mquantile, mround
 from .rasterize import rasterize_date_labels
-from .units import COMPAT, get_mode
+from .units import COMPAT, FIXED, get_mode
 
 HPY, PLE, BLD, UNK = 1, 2, 3, 4
 CLASS_NAMES = ("HPY", "PLE", "BLD")
@@ -37,7 +37,7 @@ class Stage2Options:
     healthy_anchor_date: str = "20230509"
     bleached_anchor_date: str = "20240613"
     interpretation_date: str = "20240514"
-    mode: object = field(default=COMPAT)
+    mode: object = field(default=FIXED)
 
 
 # --------------------------------------------------------------------------
@@ -80,7 +80,7 @@ def _spatial_block(p):
 class StackView:
     """Per-date (H, W, 8) spectra on the ``mode`` scale, cached in memory."""
 
-    def __init__(self, stack, mode=COMPAT):
+    def __init__(self, stack, mode=FIXED):
         self.stack = stack
         self.mode = get_mode(mode)
         self.dates = list(stack.dates)

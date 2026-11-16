@@ -13,9 +13,9 @@ __pycache__/
 *.pyc
 
 # MATLAB / local config
-config/paths_local.m
-config/*.local.m
-config/*_local.m
+legacy/matlab/config/paths_local.m
+legacy/matlab/config/*.local.m
+legacy/matlab/config/*_local.m
 pipeline_logratio_config.mat
 *.prj
 
@@ -43,21 +43,21 @@ pipeline_logratio_config.mat
 *.xlsx
 
 # Allow only curated sample files in the sample tree
-!sample/
-!sample/README.md
-!sample/sample_manifest.csv
-!sample/sample_dates.txt
-!sample/sample_folder_tree.txt
-!sample/sample_config_notes.md
-!sample/processed_examples/
-!sample/processed_examples/README.md
-!sample/processed_examples/*.tif
-!sample/processed_examples/*.tiff
-!sample/processed_examples/*.png
-!sample/processed_examples/*.jpg
-!sample/processed_examples/*.jpeg
-!sample/processed_examples/*.csv
-!sample/processed_examples/*.txt
+!legacy/matlab/sample/
+!legacy/matlab/sample/README.md
+!legacy/matlab/sample/sample_manifest.csv
+!legacy/matlab/sample/sample_dates.txt
+!legacy/matlab/sample/sample_folder_tree.txt
+!legacy/matlab/sample/sample_config_notes.md
+!legacy/matlab/sample/processed_examples/
+!legacy/matlab/sample/processed_examples/README.md
+!legacy/matlab/sample/processed_examples/*.tif
+!legacy/matlab/sample/processed_examples/*.tiff
+!legacy/matlab/sample/processed_examples/*.png
+!legacy/matlab/sample/processed_examples/*.jpg
+!legacy/matlab/sample/processed_examples/*.jpeg
+!legacy/matlab/sample/processed_examples/*.csv
+!legacy/matlab/sample/processed_examples/*.txt
 
 # Logs / run artifacts
 *.log
@@ -75,3 +75,8 @@ Source/
 done/
 Post Analysis/
 Merging plan/
+
+# Python port: machine-local paths and derived arrays
+paths.local.json
+*.npy
+*.npz

@@ -11,12 +11,12 @@ gate, gprops = load_treebagger(paths.STAGE2_OUTPUT, "rfGate", return_object=True
 stress, sprops = load_treebagger(paths.STAGE2_OUTPUT, "rfStress", return_object=True)
 print(f"loaded forests: gate {len(gate.trees)} trees {gate.class_names}, stress {len(stress.trees)} trees ({time.time()-t0:.1f}s)")
 
-inp = stage2.prepare_frozen_inputs()
+inp = stage2.prepare_frozen_inputs(stage2.Stage2Options(mode="compat"))
 ref = io.load_stage2_output()
 
 # 1. training features: every PrivateX row must be an exact row of the Python features
 def feats(X):
-    return fe.build_hybrid_features(fe.compute_feature_base(X), inp["mu_h"], inp["mu_b"], inp["v"], inp["vnorm2"])
+    return fe.build_hybrid_features(fe.compute_feature_base(X, "compat"), inp["mu_h"], inp["mu_b"], inp["v"], inp["vnorm2"])
 Xtr = inp["Xtrain"]
 pool_gate = np.concatenate([feats(Xtr["HPY"]), feats(np.concatenate([Xtr["PLE"], Xtr["BLD"]]))])
 pool_stress = np.concatenate([feats(Xtr["PLE"]), feats(Xtr["BLD"])])

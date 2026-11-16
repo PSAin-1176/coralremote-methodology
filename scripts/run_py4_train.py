@@ -17,7 +17,7 @@ ap.add_argument("--engine", default="matlab_cart", choices=["matlab_cart", "skle
 a = ap.parse_args()
 
 t0 = time.time()
-inp = stage2.prepare_frozen_inputs()
+inp = stage2.prepare_frozen_inputs(stage2.Stage2Options(mode="compat"))
 fg = load_treebagger(paths.STAGE2_OUTPUT, "rfGate")
 fs = load_treebagger(paths.STAGE2_OUTPUT, "rfStress")
 ref = stage2.run_frozen(fg, fs, inp, return_maps=True)

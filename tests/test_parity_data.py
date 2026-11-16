@@ -11,7 +11,7 @@ needs_data = pytest.mark.skipif(not paths.GLINT_STACK.exists(), reason="frozen d
 
 @pytest.fixture(scope="module")
 def inputs():
-    return stage2.prepare_frozen_inputs()
+    return stage2.prepare_frozen_inputs(stage2.Stage2Options(mode="compat"))
 
 
 @needs_data

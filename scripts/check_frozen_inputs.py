@@ -2,7 +2,7 @@
 import time, numpy as np
 from coralremote import io, stage2
 t=time.time()
-inp = stage2.prepare_frozen_inputs()
+inp = stage2.prepare_frozen_inputs(stage2.Stage2Options(mode="compat"))
 print("time", round(time.time()-t,1))
 ref = io.load_stage2_output()
 print("thresholds", {k: float(v) for k,v in inp["thresholds"].items()})

@@ -1,15 +1,28 @@
 """Locations of the frozen paper-of-record inputs and outputs.
 
-The data root defaults to ``E:/CoralRemote`` and can be overridden with the
-``CORALREMOTE_ROOT`` environment variable. Nothing under ``Asset``,
-``Source``, ``Results`` or ``docs/Mar6`` is ever written by this package.
+Machine-specific locations come from, in order: environment variables
+(``CORALREMOTE_ROOT``, ``CORALREMOTE_A3_ROOT``, ``CORALREMOTE_RAW_PLANET``,
+``CORALREMOTE_CACHE``), then a git-ignored ``paths.local.json`` at the repo
+root (keys ``root``, ``a3_root``, ``raw_planet``, ``cache``; see
+``paths.example.json``), then defaults relative to the data root.
+Nothing under ``Asset``, ``Source``, ``Results``, ``docs/Mar6``, the A3
+outputs or the raw scenes is ever written by this package.
 """
 from __future__ import annotations
 
+import json
 import os
 from pathlib import Path
 
-ROOT = Path(os.environ.get("CORALREMOTE_ROOT", "E:/CoralRemote"))
+_LOCAL_FILE = Path(__file__).resolve().parent.parent / "paths.local.json"
+_LOCAL = json.loads(_LOCAL_FILE.read_text(encoding="utf-8")) if _LOCAL_FILE.exists() else {}
+
+
+def _setting(env, key, default):
+    return Path(os.environ.get(env) or _LOCAL.get(key) or default)
+
+
+ROOT = _setting("CORALREMOTE_ROOT", "root", "E:/CoralRemote")
 ASSET = ROOT / "Asset"
 SOURCE = ROOT / "Source"
 RESULTS = ROOT / "Results"
@@ -48,16 +61,14 @@ def assert_writable(path) -> Path:
 
 
 def cache_dir() -> Path:
-    d = Path(os.environ.get("CORALREMOTE_CACHE", ROOT / "coralremote-python-cache"))
+    d = _setting("CORALREMOTE_CACHE", "cache", ROOT / "coralremote-python-cache")
     assert_writable(d)
     d.mkdir(parents=True, exist_ok=True)
     return d
 
-# Paper Stage 1 run and the A3 pipeline outputs that survive (OneDrive copy of
-# C:\SAT\Data\Output_LogRatio\A3, made 5 Apr 2026; C:\SAT no longer exists).
-A3_ROOT = Path(os.environ.get(
-    "CORALREMOTE_A3_ROOT",
-    "E:/OneDrive - Chulalongkorn University/2026/ReefCode/Manuscript/Resources/source_V15/Data/Output_LogRatio/A3"))
+# Paper Stage 1 run and the A3 pipeline outputs that survive (a copy of the
+# original Output_LogRatio/A3 folder, made 5 Apr 2026).
+A3_ROOT = _setting("CORALREMOTE_A3_ROOT", "a3_root", ROOT / "A3")
 STAGE1_RUN = A3_ROOT / "Phase_Stage1" / "run_20260401_170150"
 STAGE1_MODEL = STAGE1_RUN / "rf_stage1_model.mat"
 STAGE1_REPORT = STAGE1_RUN / "stage1_report.txt"
@@ -66,5 +77,5 @@ REEF_MASK_TIF = A3_ROOT / "Phase2_Masking" / "run_20260401_102458" / "reef_mask.
 STAGE1_LABELS = {"train": ASSET / "TrainingStage1.geojson", "test": ASSET / "TestingStage1.geojson"}
 READ_ONLY_DIRS = READ_ONLY_DIRS + (A3_ROOT,)
 # Raw PlanetScope scenes + UDM2 (removable backup drive; may be absent).
-RAW_PLANET_DIR = Path(os.environ.get("CORALREMOTE_RAW_PLANET", "F:/Work_Backup/SAT/Data"))
+RAW_PLANET_DIR = _setting("CORALREMOTE_RAW_PLANET", "raw_planet", ROOT / "RawPlanet")
 READ_ONLY_DIRS = READ_ONLY_DIRS + (RAW_PLANET_DIR,)

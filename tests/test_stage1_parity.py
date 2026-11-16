@@ -1,4 +1,4 @@
-"""Stage 1 parity against the paper run (needs the OneDrive A3 outputs and
+"""Stage 1 parity against the paper run (needs the A3 outputs (paths.A3_ROOT) and
 the raw scenes on the backup drive for UDM2; skipped otherwise)."""
 import numpy as np
 import pytest

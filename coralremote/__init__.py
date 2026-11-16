@@ -1,7 +1,10 @@
-"""CoralRemote: PlanetScope coral bleaching pipeline (Python port).
+"""CoralRemote: PlanetScope coral bleaching pipeline (Python).
 
-Stage modules: io, units, preprocess, features, wave, stage1, mask,
-autolabel, stage2, evaluate, figures. ``matlab_compat``, ``rasterize`` and
-``forest`` hold the MATLAB-exact helpers used for paper-of-record parity.
+Modules: ``io``, ``paths`` and ``units`` (data access and the unit contract);
+``preprocess`` (Phase 3-5 rebuild for Stage 1); ``features``, ``stage1``,
+``stage2``, ``train``, ``cart`` and ``forest`` (classification); ``mask``
+(baseline coral mask); ``wave`` (FFT sea-state diagnostic); ``evaluate``;
+``regression`` (P8 test tile). ``matlab_compat`` and ``rasterize`` hold the
+MATLAB-exact helpers used for paper-of-record parity.
 """
-__version__ = "0.1.0.dev0"
+__version__ = "1.0.0rc1"
