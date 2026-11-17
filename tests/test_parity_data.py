@@ -6,7 +6,7 @@ import pytest
 from coralremote import io, paths, stage2
 
 pytestmark = pytest.mark.data
-needs_data = pytest.mark.skipif(not paths.GLINT_STACK.exists(), reason="frozen data not available")
+needs_data = pytest.mark.skipif(not paths.available(paths.GLINT_STACK), reason="frozen data not available")
 
 
 @pytest.fixture(scope="module")

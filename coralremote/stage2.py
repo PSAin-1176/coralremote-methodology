@@ -17,7 +17,7 @@ from .features import (axis_vector, build_hybrid_features, compute_feature_base,
                        prepare_spectra, project_to_axis, rowsum)
 from .matlab_compat import find_colmajor, mquantile, mround
 from .rasterize import rasterize_date_labels
-from .units import COMPAT, FIXED, get_mode
+from .units import COMPAT, FIXED, UnitError, assert_reflectance, get_mode
 
 HPY, PLE, BLD, UNK = 1, 2, 3, 4
 CLASS_NAMES = ("HPY", "PLE", "BLD")
@@ -78,18 +78,41 @@ def _spatial_block(p):
 # --------------------------------------------------------------------------
 # sampling
 class StackView:
-    """Per-date (H, W, 8) spectra on the ``mode`` scale, cached in memory."""
+    """Per-date (H, W, 8) spectra on the ``mode`` scale, cached in memory.
 
-    def __init__(self, stack, mode=FIXED):
+    Unit contract (checked here, at the load boundary):
+
+    * ``fixed`` multiplies stored values by ``SR_SCALE``, so the stack must
+      declare ``on_disk_scale == SR_SCALE`` (the double-scaled paper stack).
+      A stack already in reflectance (``on_disk_scale`` 1) is refused rather
+      than scaled a second time.
+    * ``compat`` keeps stored values; the stack's declared scale is used only
+      for the check.
+    * With ``check_mask`` (H x W), every date is passed through
+      :func:`units.assert_reflectance` on that mask the first time it is
+      read, with the scale that turns prepared values into reflectance.
+    """
+
+    def __init__(self, stack, mode=FIXED, check_mask=None):
         self.stack = stack
         self.mode = get_mode(mode)
         self.dates = list(stack.dates)
         self.ref = stack.ref
+        self.check_mask = check_mask
+        disk = float(getattr(stack, "on_disk_scale", 1.0))
+        if self.mode.stack_multiplier != 1.0 and disk != self.mode.stack_multiplier:
+            raise UnitError(f"mode {self.mode.name} multiplies stored values by {self.mode.stack_multiplier:g}, "
+                            f"but the stack declares on_disk_scale={disk:g}")
+        self.check_scale = disk / self.mode.stack_multiplier
         self._cache = {}
 
     def get(self, date):
         if date not in self._cache:
-            self._cache[date] = prepare_spectra(self.stack.get(date), self.mode)
+            A = prepare_spectra(self.stack.get(date), self.mode)
+            if self.check_mask is not None:
+                assert_reflectance(A, f"{getattr(self.stack, 'path', 'stack')}[{date}]",
+                                   mask=self.check_mask, scale=self.check_scale)
+            self._cache[date] = A
         return self._cache[date]
 
 
@@ -253,7 +276,7 @@ def prepare_frozen_inputs(opts=None, stack=None, drop_train_dates=()):
     stack = stack or io.load_glint_stack()
     support, H, W = io.load_baseline_mask()
     assert (H, W) == (stack.ref.height, stack.ref.width)
-    view = StackView(stack, opts.mode)
+    view = StackView(stack, opts.mode, check_mask=support)
 
     u_train, u_test = io.load_labels("unified_train"), io.load_labels("unified_test")
     s_train, s_test = io.load_labels("strict_train"), io.load_labels("strict_test")

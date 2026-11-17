@@ -50,6 +50,20 @@ LABELS = {
 }
 
 
+def available(*ps) -> bool:
+    """True if every path exists and can be queried. An unreachable or
+    access-denied location (``OSError``, e.g. ``PermissionError`` on an
+    unmounted or locked drive) counts as unavailable instead of raising, so
+    optional-data tests skip rather than fail at collection."""
+    for p in ps:
+        try:
+            if not Path(p).exists():
+                return False
+        except OSError:
+            return False
+    return True
+
+
 def assert_writable(path) -> Path:
     """Refuse to write inside the protected paper-of-record folders."""
     p = Path(path).resolve()

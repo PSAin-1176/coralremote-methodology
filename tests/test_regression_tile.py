@@ -16,7 +16,7 @@ from coralremote.features import compute_feature_base, prepare_spectra
 from coralremote.units import COMPAT, FIXED, assert_reflectance
 
 pytestmark = [pytest.mark.data,
-              pytest.mark.skipif(not (paths.GLINT_STACK.exists() and paths.BASELINE_MASK.exists()),
+              pytest.mark.skipif(not (paths.available(paths.GLINT_STACK) and paths.available(paths.BASELINE_MASK)),
                                  reason="Source stack / baseline mask not available")]
 GOLDEN = json.loads((Path(__file__).parent / "golden" / "regression_tile.json").read_text())
 
@@ -75,7 +75,7 @@ def test_golden_aggregates(tile):
         np.testing.assert_allclose(g["mean_feature_base_fixed"], w["mean_feature_base_fixed"], rtol=1e-5, atol=1e-6)
 
 
-@pytest.mark.skipif(not paths.STAGE2_OUTPUT.exists(), reason="paper Stage 2 run not available")
+@pytest.mark.skipif(not paths.available(paths.STAGE2_OUTPUT), reason="paper Stage 2 run not available")
 def test_paper_forest_counts_on_tile(tile):
     from coralremote import io, regression
     from coralremote.forest import load_treebagger

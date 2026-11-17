@@ -58,7 +58,9 @@ No imagery, reflectance stacks, feature stacks or model files are in this reposi
 - copying `paths.example.json` to `paths.local.json` (git-ignored), or
 - setting `CORALREMOTE_ROOT`, `CORALREMOTE_A3_ROOT`, `CORALREMOTE_RAW_PLANET` and `CORALREMOTE_CACHE`.
 
-The package never writes inside the source folders (`paths.READ_ONLY_DIRS`). Derived arrays go to the cache folder.
+The full list of inputs (files, variables, units, grid, original run IDs, SHA-256 checksums, and how each can be obtained or rebuilt) is in [docs/INPUTS.md](docs/INPUTS.md). Most commands need archived products that only the author can supply; that file says which.
+
+Every write by the package and scripts goes through `paths.assert_writable`, which refuses paths inside the protected source folders (`paths.READ_ONLY_DIRS`). This covers the cache folder, forest exports and the scripts' output arguments (`--json` and similar). Derived arrays go to the cache folder. The cache is keyed on the source file's path, size and modification time, so a replaced input is re-read rather than served from a stale cache.
 
 ## Tests
 ```bash

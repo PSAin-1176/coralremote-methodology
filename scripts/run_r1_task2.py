@@ -149,5 +149,5 @@ for k, v in res["feature_space"].items():
     print(f"   {k:34s} {t['n']:6d} | {t['median']:.3f} [{t['q25']:.3f}, {t['q75']:.3f}] | "
           f"{rr['median']:.4f} [{rr['q25']:.4f}, {rr['q75']:.4f}]")
 
-json.dump(res, open(OUT, "w"), indent=1, default=float)
+json.dump(res, open(paths.assert_writable(OUT), "w"), indent=1, default=float)
 print("written", OUT)

@@ -15,6 +15,8 @@ ap.add_argument("--rows", default="compat", choices=["compat", "numpy"])
 ap.add_argument("--json", default=None)
 ap.add_argument("--engine", default="matlab_cart", choices=["matlab_cart", "sklearn"])
 a = ap.parse_args()
+if a.json:
+    paths.assert_writable(a.json)
 
 t0 = time.time()
 inp = stage2.prepare_frozen_inputs(stage2.Stage2Options(mode="compat"))

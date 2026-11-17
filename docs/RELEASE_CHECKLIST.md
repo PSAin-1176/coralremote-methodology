@@ -14,6 +14,14 @@
   - the units numbers match the paper's paired comparison (§3.5.6).
 - [x] **Version 1.0.0:** set in `pyproject.toml` and `coralremote/__init__.py`. The CHANGELOG is updated, and `CITATION.cff` has been added.
 - [x] **Internal port reports kept** (`docs/PY4–PY8`, `R1_LOO_DATE`). Local paths were removed. Their R1 details are the ones the revised paper discloses.
+- [x] **Pre-push review (Codex, 18 Nov 2026) R1–R7 applied:**
+  - provenance wording corrected (R1);
+  - input manifest with checksums in `docs/INPUTS.md` (R2);
+  - stack cache keyed on and validated against the source file (R3);
+  - unit check enforced where Stage 2 reads the stack (R4);
+  - inaccessible optional data skips instead of failing (R5);
+  - output arguments checked with `paths.assert_writable` (R6);
+  - environment and checklist wording tidied (R7).
 - [x] **No second-manuscript material:** the change-detection work lives in a separate local repository, `coralremote-change`, which is not part of this release.
 
 ## Push (author)

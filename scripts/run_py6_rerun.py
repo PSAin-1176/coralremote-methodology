@@ -28,6 +28,7 @@ ap.add_argument("--seeds", type=int, nargs="+", default=[0, 1, 2, 3, 4])
 ap.add_argument("--modes", nargs="+", default=["compat", "fixed"])
 ap.add_argument("--json", default=str(paths.cache_dir() / "py6_rerun.json"))
 a = ap.parse_args()
+paths.assert_writable(a.json)
 
 t0 = time.time()
 inputs = {"compat": stage2.prepare_frozen_inputs(stage2.Stage2Options(mode=COMPAT))}

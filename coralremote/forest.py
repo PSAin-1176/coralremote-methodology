@@ -95,7 +95,8 @@ class Forest:
             d[f"t{i}_cut_point"] = t.cut_point
             d[f"t{i}_children"] = t.children
             d[f"t{i}_class_prob"] = t.class_prob
-        np.savez_compressed(path, **d)
+        from . import paths
+        np.savez_compressed(paths.assert_writable(path), **d)
 
     @classmethod
     def load_npz(cls, path):

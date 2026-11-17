@@ -6,8 +6,8 @@ import pytest
 from coralremote import paths
 
 pytestmark = pytest.mark.data
-needs = pytest.mark.skipif(not (paths.STAGE1_MODEL.exists() and paths.RAW_PLANET_DIR.exists()
-                                and paths.RAW_STACK.exists()), reason="Stage 1 inputs not available")
+needs = pytest.mark.skipif(not (paths.available(paths.STAGE1_MODEL) and paths.available(paths.RAW_PLANET_DIR)
+                                and paths.available(paths.RAW_STACK)), reason="Stage 1 inputs not available")
 
 
 @pytest.fixture(scope="module")

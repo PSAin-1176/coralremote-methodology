@@ -26,7 +26,7 @@ def test_compat_floor_equals_one_percent_reflectance():
 
 
 @pytest.mark.data
-@pytest.mark.skipif(not (paths.GLINT_STACK.exists() and paths.RAW_STACK.exists()), reason="stacks not available")
+@pytest.mark.skipif(not (paths.available(paths.GLINT_STACK) and paths.available(paths.RAW_STACK)), reason="stacks not available")
 @pytest.mark.parametrize("date", ["20240307", "20240620", "20241111"])
 def test_fixed_stack_nir_equals_raw_and_floor_rarely_binds(date):
     from coralremote.preprocess import raw_stack

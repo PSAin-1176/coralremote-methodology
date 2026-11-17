@@ -10,6 +10,7 @@ All loaders are read-only.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 from dataclasses import dataclass
 from functools import lru_cache
@@ -62,6 +63,45 @@ def _read_mapcells_ref(f) -> RasterRef:
     raise KeyError("no MapCellsReference property struct found")
 
 
+# --------------------------------------------------------------------------
+# derived-array cache: keyed on the source file's identity and validated
+def cache_path_for(src, var):
+    """Cache file for variable ``var`` of ``src``. The name includes a hash of
+    the resolved source path, so same-named files in different folders never
+    share an entry."""
+    key = hashlib.sha1(str(Path(src).resolve()).lower().encode()).hexdigest()[:12]
+    return paths.cache_dir() / f"{Path(src).stem}__{var}__{key}.npy"
+
+
+def cache_meta(src, var, shape, dates):
+    st = Path(src).stat()
+    return {"source": str(Path(src).resolve()), "var": var, "size": int(st.st_size),
+            "mtime_ns": int(st.st_mtime_ns), "shape": [int(x) for x in shape], "dates": list(map(str, dates))}
+
+
+def _meta_path(cache_file):
+    return Path(cache_file).with_suffix(".meta.json")
+
+
+def write_cache_meta(cache_file, meta):
+    _meta_path(cache_file).write_text(json.dumps(meta, indent=1))
+
+
+def cache_is_valid(cache_file, meta):
+    """True only if the cache file exists, its sidecar matches ``meta``
+    (source path, size, modification time, shape, dates) and the stored array
+    has that shape."""
+    cache_file, mp = Path(cache_file), _meta_path(cache_file)
+    if not (cache_file.exists() and mp.exists()):
+        return False
+    try:
+        if json.loads(mp.read_text()) != meta:
+            return False
+        return list(np.load(cache_file, mmap_mode="r").shape) == meta["shape"]
+    except (OSError, ValueError):
+        return False
+
+
 class StackFile:
     """Lazy reader for an (H, W, 8, N) v7.3 stack.
 
@@ -83,14 +123,19 @@ class StackFile:
         self._use_cache = cache
         self._arr = None
 
+    def _expected_shape(self):
+        n, b, w, h = self.shape_h5
+        return [int(n), int(h), int(w), int(b)]
+
     def _cache_path(self):
-        return paths.cache_dir() / f"{self.path.stem}__{self.var}.npy"
+        return cache_path_for(self.path, self.var)
 
     def _load_all(self):
         if self._arr is not None:
             return self._arr
         cp = self._cache_path() if self._use_cache else None
-        if cp is not None and cp.exists():
+        meta = cache_meta(self.path, self.var, self._expected_shape(), self.dates)
+        if cp is not None and cache_is_valid(cp, meta):
             self._arr = np.load(cp, mmap_mode="r")
             return self._arr
         with h5py.File(self.path, "r") as f:
@@ -98,6 +143,7 @@ class StackFile:
         a = np.ascontiguousarray(a.transpose(0, 3, 2, 1))   # (N, H, W, 8)
         if cp is not None:
             np.save(cp, a)
+            write_cache_meta(cp, meta)
             a = np.load(cp, mmap_mode="r")
         self._arr = a
         return a

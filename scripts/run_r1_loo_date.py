@@ -50,6 +50,7 @@ ap.add_argument("--settings", nargs="+",
                 default=["baseline"] + [f"rows_{d}" for d in JUNE] + [f"strict_{d}" for d in JUNE] + ["alljune"])
 ap.add_argument("--json", default=str(paths.cache_dir() / "r1_loo_date.json"))
 a = ap.parse_args()
+paths.assert_writable(a.json)
 t0 = time.time()
 
 

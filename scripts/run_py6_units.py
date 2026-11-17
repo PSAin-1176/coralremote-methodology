@@ -44,4 +44,4 @@ for d in g.dates:
           + " ".join(f"{v:4.1f}" for v in fc) + " | " + " ".join(f"{v:4.2f}" for v in ff)
           + " | " + " ".join(f"{v:4.2f}" for v in neg))
 if len(sys.argv) > 1:
-    json.dump(out, open(sys.argv[1], "w"), indent=1)
+    json.dump(out, open(paths.assert_writable(sys.argv[1]), "w"), indent=1)

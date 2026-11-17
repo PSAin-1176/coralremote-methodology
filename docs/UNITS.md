@@ -2,7 +2,9 @@
 
 ## Convention
 - **Every array is surface reflectance on a 0–1 scale.** PlanetScope SR GeoTIFFs store reflectance × 10,000 (`units.SR_SCALE`). Divide once, on reading the GeoTIFF, and never again.
-- `units.assert_reflectance(A, name)` runs on load. It checks:
+- **Where the check runs:** `units.assert_reflectance` is enforced where Stage 2 reads the stack (`stage2.StackView`, built by `prepare_frozen_inputs`). Each date is checked over the baseline coral mask the first time it is read, with the scale that turns the prepared values into reflectance. A low-level `io.StackFile.get` returns stored values unchanged; call `StackFile.check_units` when using it directly.
+- **Declared scale:** every stack loader declares its on-disk scale (`on_disk_scale`: 10,000 for the double-scaled Source glint stack, 1 for the raw stack). `fixed` mode refuses a stack whose declared scale is not 10,000, so reflectance is never multiplied a second time.
+- `units.assert_reflectance` checks:
   - the finite fraction;
   - the median visible reflectance is 0.005–0.3;
   - the median NIR is 0.001–0.1;

@@ -54,7 +54,7 @@ def test_wave_annulus_bins():
 
 # ---- parity on the paper-of-record data -------------------------------------
 @pytest.mark.data
-@pytest.mark.skipif(not (paths.BASELINE_MASK.exists() and mask.PHASE9_DIR.exists()),
+@pytest.mark.skipif(not (paths.available(paths.BASELINE_MASK) and paths.available(mask.PHASE9_DIR)),
                     reason="baseline mask or A3 Phase 9 maps not available")
 def test_baseline_mask_chain_exact():
     import scipy.io as sio
@@ -67,7 +67,7 @@ def test_baseline_mask_chain_exact():
 
 
 @pytest.mark.data
-@pytest.mark.skipif(not paths.RAW_STACK.exists(), reason="raw stack not available")
+@pytest.mark.skipif(not paths.available(paths.RAW_STACK), reason="raw stack not available")
 def test_wave_verdicts_match_paper():
     from coralremote.preprocess import raw_stack
     s = raw_stack()
