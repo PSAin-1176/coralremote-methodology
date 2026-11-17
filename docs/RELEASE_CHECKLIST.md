@@ -6,10 +6,10 @@
 
 ## Done
 - [x] **No data tracked.** `git ls-files | grep -Ei '\.(mat|tif|tiff|npy|npz|h5)$'` prints nothing. `tests/golden/regression_tile.json` holds only aggregates (400-pixel means, fractions, class counts), the same kind of numbers the paper publishes.
-- [x] `paths.local.json` is untracked (`.gitignore`). No hard-coded local drive, user or cloud-storage paths remain outside `legacy/`. The Allen Coral Atlas path is now a setting (`aca_bathymetry`).
+- [x] `paths.local.json` is untracked (`.gitignore`). No active machine-specific path defaults remain in code: path settings come from `paths.local.json` or environment variables. Explanatory references to the original `C:/SAT` locations remain in docstrings and provenance notes, and `paths.example.json` contains placeholder Windows paths. The Allen Coral Atlas path is now a setting (`aca_bathymetry`).
 - [x] **Commit identity:** every commit after `main` uses the author's academic address. The three `main` commits are already on GitHub and are not rewritten.
 - [x] **README:**
-  - MATLAB (`legacy/matlab/`) is the reference implementation of the paper;
+  - the paper's results came from the author's original MATLAB workflow (surviving scripts and archived outputs listed in `docs/PROVENANCE.md`, not in this repository); `legacy/matlab/` is an earlier public two-class workflow, not the paper's code;
   - Python is the verified reimplementation (`compat` reproduces Tables 4–5; `fixed` corrects the input scaling);
   - the units numbers match the paper's paired comparison (§3.5.6).
 - [x] **Version 1.0.0:** set in `pyproject.toml` and `coralremote/__init__.py`. The CHANGELOG is updated, and `CITATION.cff` has been added.

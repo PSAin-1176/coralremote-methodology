@@ -14,5 +14,7 @@ dependencies:
   - matplotlib=3.10.6
   - pytest=8.4.2
   - pip
-  # Pending author approval (patch plan §7.5): mat-io (reads MATLAB
-  # TreeBagger objects), arosics, pyproj, geopandas/shapely.
+  - pip:
+      - mat-io==1.0.2   # required: reads the saved MATLAB TreeBagger models (tested version)
+# Not required by this package: arosics, pyproj, geopandas/shapely
+# (co-registration and vector tools of the original workflow are not ported).

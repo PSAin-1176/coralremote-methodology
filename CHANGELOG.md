@@ -14,7 +14,7 @@
   - Stage 1 OOB, test and transfer results are exact;
   - the baseline mask is exact to 0 px;
   - all 14 wave verdicts match.
-- The previous MATLAB pipeline moved unchanged to `legacy/matlab/`. It is frozen.
+- The earlier public MATLAB workflow (two-class Stage 2; not the code that produced the AJSTR results) moved unchanged to `legacy/matlab/`. It is frozen. The paper's original MATLAB scripts are not in this repository; see `docs/PROVENANCE.md`.
 
 ### Fixed: reflectance double-scaling in the Stage 2 inputs
 - The source stacks used for the AJSTR Stage 2 analysis (built 5 Apr 2026) divided PlanetScope SR by 10,000 twice. The bare 1e-6 feature floor therefore acted as a 0.01-reflectance floor and clipped NIR on 23–84% of coral-mask pixels on five dates (most on 20240307).

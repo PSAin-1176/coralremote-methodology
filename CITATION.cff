@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it and the accompanying article."
-title: "CoralRemote: PlanetScope coral bleaching classification workflow (MATLAB reference implementation and Python reimplementation)"
+title: "CoralRemote: Python reimplementation of a PlanetScope coral bleaching classification workflow"
 version: 1.0.0
 license: MIT
 repository-code: "https://github.com/PSAin-1176/coralremote-methodology"

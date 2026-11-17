@@ -2,7 +2,7 @@
 
 Python pipeline for mapping coral bleaching from PlanetScope SuperDove imagery: a log-ratio substrate screen (Stage 1), a consensus baseline coral mask, a hierarchical healthy / pale / bleached classifier (Stage 2) and an image-only wave diagnostic. Study site: Koh Man Nai, Rayong, Thailand, 14 dates from 2023 to 2025.
 
-The results in the AJSTR paper (Sa-ngadsup, Haq and Cheewinsiriwat, *Multitemporal PlanetScope-based assessment of spectral signatures of coral bleaching and recovery at Koh Man Nai, Gulf of Thailand*) were produced with the MATLAB code in [`legacy/matlab/`](legacy/matlab/README.md). It is kept unchanged as the reference implementation.
+The results in the AJSTR paper (Sa-ngadsup, Haq and Cheewinsiriwat, *Multitemporal PlanetScope-based assessment of spectral signatures of coral bleaching and recovery at Koh Man Nai, Gulf of Thailand*) were produced by the author's original MATLAB workflow, whose surviving scripts and archived outputs are identified in [docs/PROVENANCE.md](docs/PROVENANCE.md). Those scripts are not part of this repository. This repository provides a Python reimplementation verified against the archived outputs. [`legacy/matlab/`](legacy/matlab/README.md) contains an earlier public MATLAB workflow (two-class Stage 2). It does not implement the paper's hierarchical Stage 2 classifier.
 
 The MATLAB licence was no longer available when the analyses requested in peer review were run, so the workflow was reimplemented in Python:
 - **`compat` mode:** loaded with the archived MATLAB-trained forests, it reproduces the paper's Tables 4 and 5 exactly.
