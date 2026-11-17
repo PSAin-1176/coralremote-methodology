@@ -93,15 +93,16 @@ class StackView:
         return self._cache[date]
 
 
-def build_raw_spectral_split(view, support, features, class_to_id):
+def build_raw_spectral_split(view, support, features, class_to_id, return_dates=False):
     """Port of ``buildRawSpectralSplit``: dates in order of first appearance,
-    pixels in column-major order within each date."""
+    pixels in column-major order within each date. With ``return_dates`` a
+    third array gives each row's acquisition date."""
     dates = []
     for f in features:
         d = str(f["properties"]["date"])
         if d and d not in dates:
             dates.append(d)
-    Xs, Ys = [], []
+    Xs, Ys, Ds = [], [], []
     for d in dates:
         mask, label = rasterize_date_labels(features, view.ref, class_to_id, d)
         mask &= support
@@ -110,9 +111,12 @@ def build_raw_spectral_split(view, support, features, class_to_id):
         r, c = find_colmajor(valid)
         Xs.append(A[r, c, :])
         Ys.append(label[r, c])
+        Ds.append(np.full(r.size, d))
     if not Xs:
-        return np.zeros((0, 8), np.float32), np.zeros(0, np.uint8)
-    return np.concatenate(Xs), np.concatenate(Ys)
+        empty = (np.zeros((0, 8), np.float32), np.zeros(0, np.uint8))
+        return empty + (np.zeros(0, "<U8"),) if return_dates else empty
+    out = (np.concatenate(Xs), np.concatenate(Ys))
+    return out + (np.concatenate(Ds),) if return_dates else out
 
 
 def mean_omitnan_f32(X):
@@ -236,9 +240,15 @@ def classify_all_dates(view, support, mu_h, mu_b, gate, stress, opts, return_map
 
 # --------------------------------------------------------------------------
 # frozen-model run (Py3)
-def prepare_frozen_inputs(opts=None, stack=None):
+def prepare_frozen_inputs(opts=None, stack=None, drop_train_dates=()):
     """Everything up to the trained forests that is deterministic: axis
-    statistics, PLE curation, split, test pixels (in MATLAB order)."""
+    statistics, PLE curation, split, test pixels (in MATLAB order).
+
+    ``drop_train_dates``: training polygons (HPY, BLD, PLE) on these dates
+    are left out before anything is computed, so the axis means, thresholds
+    and PLE curation are re-derived without them (R1 leave-date-out check).
+    Test polygons and anchors are unchanged. ``Dtrain`` gives each training
+    row's date."""
     opts = opts or Stage2Options()
     stack = stack or io.load_glint_stack()
     support, H, W = io.load_baseline_mask()
@@ -251,9 +261,15 @@ def prepare_frozen_inputs(opts=None, stack=None):
     train_h = filter_features(u_train, {"HPY"}, True)
     train_b = filter_features(s_train, {"BLD"}, True)
     train_p_all = filter_features(u_train, {"PLE"}, True)
+    if drop_train_dates:
+        drop = {str(d) for d in drop_train_dates}
 
-    Xh, _ = build_raw_spectral_split(view, support, train_h, {"HPY": HPY})
-    Xb, _ = build_raw_spectral_split(view, support, train_b, {"BLD": BLD})
+        def keep(fs):
+            return [f for f in fs if str(f["properties"].get("date")) not in drop]
+        train_h, train_b, train_p_all = keep(train_h), keep(train_b), keep(train_p_all)
+
+    Xh, _, Dh = build_raw_spectral_split(view, support, train_h, {"HPY": HPY}, return_dates=True)
+    Xb, _, Db = build_raw_spectral_split(view, support, train_b, {"BLD": BLD}, return_dates=True)
     Fh = compute_feature_base(Xh, view.mode)
     Fb = compute_feature_base(Xb, view.mode)
     mu_h = mean_omitnan_f32(Fh[:, :8])
@@ -268,12 +284,12 @@ def prepare_frozen_inputs(opts=None, stack=None):
     curated, ple_stats = select_middle_pale(train_p_all, view, support, mu_h, v, vnorm2,
                                             h_thr, b_thr, r_anchor, opts)
     train_p, test_p, split_stats = split_by_block(curated, opts.ple_train_blocks, opts.ple_test_blocks)
-    Xp, _ = build_raw_spectral_split(view, support, train_p, {"PLE": PLE})
+    Xp, _, Dp = build_raw_spectral_split(view, support, train_p, {"PLE": PLE}, return_dates=True)
 
     test_feats = (filter_features(u_test, {"HPY"}, False) + test_p
                   + filter_features(s_test, {"BLD"}, False))
-    Xtest, Ytest = build_raw_spectral_split(view, support, test_feats,
-                                            {"HPY": HPY, "PLE": PLE, "BLD": BLD})
+    Xtest, Ytest, Dtest = build_raw_spectral_split(view, support, test_feats,
+                                                   {"HPY": HPY, "PLE": PLE, "BLD": BLD}, return_dates=True)
     anchor_h = filter_date_features(filter_features(u_test, {"HPY"}, False), opts.healthy_anchor_date)
     anchor_b = filter_date_features(filter_features(s_test, {"BLD"}, False), opts.bleached_anchor_date)
     XaH, YaH = build_raw_spectral_split(view, support, anchor_h, {"HPY": HPY})
@@ -285,7 +301,8 @@ def prepare_frozen_inputs(opts=None, stack=None):
                 ple_stats=ple_stats, split_stats=split_stats,
                 n_train=dict(HPY=len(Xh), BLD=len(Xb), PLE=len(Xp)),
                 Xtrain=dict(HPY=Xh, BLD=Xb, PLE=Xp),
-                Xtest=Xtest, Ytest=Ytest,
+                Dtrain=dict(HPY=Dh, BLD=Db, PLE=Dp),
+                Xtest=Xtest, Ytest=Ytest, Dtest=Dtest,
                 anchors=dict(healthy=(XaH, YaH), bleached=(XaB, YaB)))
 
 
