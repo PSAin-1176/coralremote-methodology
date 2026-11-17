@@ -108,7 +108,7 @@ Py8 shows that 20240514 is not out of domain: its UNK pixels sit near the stress
 
 ## Reproduce
 ```bash
-cd E:/CoralRemote/coralremote-python
+cd coralremote-python
 PYTHONPATH=. python scripts/run_py6_units.py        # P3/P4 checks, about 1 min
 PYTHONPATH=. python scripts/run_py6_rerun.py        # P6, about 9 min (5 seeds x 2 modes)
 PYTHONPATH=. python scripts/run_py6_compare.py      # P7 tables and criteria

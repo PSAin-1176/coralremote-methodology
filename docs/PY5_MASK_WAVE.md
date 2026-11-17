@@ -70,6 +70,6 @@ The table was presumably written from visual review, so this isn't a port issue.
 
 ## Reproduce
 ```bash
-cd E:/CoralRemote/coralremote-python
+cd coralremote-python
 PYTHONPATH=. python scripts/run_py5.py      # ~10 s; exits 0 on full parity
 ```

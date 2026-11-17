@@ -248,7 +248,7 @@ frozen test OA check: 0.9748406943528894
 ## Where the BLD training labels come from
 
 **The BLD polygons are automatic labels, not field observations.**
-- **Scripts:** `Autolabel/` (local copies identical to `OneDrive …\2026\CoralRemote\Autolabel`). The driver is `Build_StrickLabel_Dataset.m`, which produced the "stricklabel" polygons used for Stage 2 BLD.
+- **Scripts:** `Autolabel/` (local copies of the original autolabel scripts; not in this repository). The driver is `Build_StrickLabel_Dataset.m`, which produced the "stricklabel" polygons used for Stage 2 BLD.
 - **Step 1: one prior over all three June dates** (`Build_HighConf_BleachedMask.m`).
   - **Inputs:** for each pixel inside the interior of the coral mask, the script takes the median over 20240613, 20240616 and 20240620 of six spectral quantities: brightness, Y/B, B/R, B/G1, DII_BR, and 2·Blue/(Red + Green1). Each is robustly scaled to 0–1.
   - **Score:** 0.28 brightness + 0.20 Y/B + 0.18 B/R + 0.10 B/G1 + 0.14 DII_BR + 0.04 blue-pale + 0.06 temporal stability. Stability is 1 minus the scaled across-date MADs.

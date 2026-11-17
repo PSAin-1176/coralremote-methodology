@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it and the accompanying article."
+title: "CoralRemote: PlanetScope coral bleaching classification workflow (MATLAB reference implementation and Python reimplementation)"
+version: 1.0.0
+license: MIT
+repository-code: "https://github.com/PSAin-1176/coralremote-methodology"
+authors:
+  - family-names: Sa-ngadsup
+    given-names: Pracharat
+    affiliation: "Chulalongkorn University"
+  - family-names: Haq
+    given-names: Nabil Amirul
+    affiliation: "Chulalongkorn University"
+preferred-citation:
+  type: article
+  title: "Multitemporal PlanetScope-based assessment of spectral signatures of coral bleaching and recovery at Koh Man Nai, Gulf of Thailand"
+  authors:
+    - family-names: Sa-ngadsup
+      given-names: Pracharat
+    - family-names: Haq
+      given-names: Nabil Amirul
+    - family-names: Cheewinsiriwat
+      given-names: Pannee
+  journal: "ASEAN Journal of Scientific and Technological Reports"
+  status: submitted

@@ -2,8 +2,8 @@
 
 Machine-specific locations come from, in order: environment variables
 (``CORALREMOTE_ROOT``, ``CORALREMOTE_A3_ROOT``, ``CORALREMOTE_RAW_PLANET``,
-``CORALREMOTE_CACHE``), then a git-ignored ``paths.local.json`` at the repo
-root (keys ``root``, ``a3_root``, ``raw_planet``, ``cache``; see
+``CORALREMOTE_CACHE``, ``CORALREMOTE_ACA_BATHY``), then a git-ignored ``paths.local.json`` at the repo
+root (keys ``root``, ``a3_root``, ``raw_planet``, ``cache``, ``aca_bathymetry``; see
 ``paths.example.json``), then defaults relative to the data root.
 Nothing under ``Asset``, ``Source``, ``Results``, ``docs/Mar6``, the A3
 outputs or the raw scenes is ever written by this package.
@@ -22,7 +22,7 @@ def _setting(env, key, default):
     return Path(os.environ.get(env) or _LOCAL.get(key) or default)
 
 
-ROOT = _setting("CORALREMOTE_ROOT", "root", "E:/CoralRemote")
+ROOT = _setting("CORALREMOTE_ROOT", "root", "data")
 ASSET = ROOT / "Asset"
 SOURCE = ROOT / "Source"
 RESULTS = ROOT / "Results"
@@ -32,6 +32,8 @@ READ_ONLY_DIRS = (ASSET, SOURCE, RESULTS, ROOT / "docs" / "Mar6")
 GLINT_STACK = SOURCE / "SourceStack_HedleyGlintReflectance.mat"
 RAW_STACK = SOURCE / "SourceStack_CoregRawReflectance.mat"
 BASELINE_MASK = ASSET / "baseline_coral_mask.mat"
+# Allen Coral Atlas bathymetry GeoTIFF (only for the R1 mask-depth summary)
+ACA_BATHY = _setting("CORALREMOTE_ACA_BATHY", "aca_bathymetry", ROOT / "Allen" / "bathymetry_0.tif")
 
 STAGE2_RUN = RESULTS / "stage2_hierarchical_curated_holdout_quicktest" / "run_20260408_192522"
 STAGE2_OUTPUT = STAGE2_RUN / "hierarchical_curated_holdout_output.mat"

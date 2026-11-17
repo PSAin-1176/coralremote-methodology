@@ -7,4 +7,4 @@ Modules: ``io``, ``paths`` and ``units`` (data access and the unit contract);
 ``regression`` (P8 test tile). ``matlab_compat`` and ``rasterize`` hold the
 MATLAB-exact helpers used for paper-of-record parity.
 """
-__version__ = "1.0.0rc1"
+__version__ = "1.0.0"

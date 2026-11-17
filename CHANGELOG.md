@@ -1,6 +1,11 @@
 # Changelog
 
-## 1.0.0 (release candidate 1.0.0rc1, 16 Nov 2026; not yet tagged or published)
+## 1.0.0 (prepared 17 Nov 2026; date set when tagged)
+
+### Peer-review analyses (AJSTR R1)
+- Leave-one-June-date-out Stage 2 test, surface-state values, mask depth and Stage 1 LOO provenance: `docs/R1_LOO_DATE.md`, `scripts/run_r1_*.py`.
+- Machine-local Allen Coral Atlas bathymetry path (`aca_bathymetry` / `CORALREMOTE_ACA_BATHY`); no hard-coded local paths remain.
+
 
 ### Python becomes the maintained implementation
 - New package `coralremote/`: Stage 1, the baseline coral mask, Stage 2 (hierarchical, curated PLE), the wave FFT diagnostic, and a TreeBagger-compatible random forest (MATLAB split rules) with a reader for saved MATLAB models.
@@ -15,7 +20,7 @@
 - The source stacks used for the AJSTR Stage 2 analysis (built 5 Apr 2026) divided PlanetScope SR by 10,000 twice. The bare 1e-6 feature floor therefore acted as a 0.01-reflectance floor and clipped NIR on 23–84% of coral-mask pixels on five dates (most on 20240307).
 - New default: true reflectance with an explicit 1e-4 floor (`units.FIXED`). `units.COMPAT` reproduces the paper-of-record behaviour for comparison only.
 - Effect on the paper's Stage 2 results (5 seeds, same procedure):
-  - OA 0.9709 vs 0.9748;
+  - paired mean OA 97.1% vs 97.3% (archived MATLAB model 97.5%);
   - F1 within 0.015;
   - dominant class unchanged on every date;
   - some class fractions move by more than 2 pp: 20240620 BLD +4.7 pp, and on 20240514 PLE +9 pp / UNK −9 pp.

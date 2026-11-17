@@ -37,7 +37,7 @@ Cells more than 1 pp off (range over seeds, Python minus paper, in pp):
 
 ## Reproduce
 ```bash
-cd E:/CoralRemote/coralremote-python
+cd coralremote-python
 PYTHONPATH=. python scripts/run_py4_train.py --seeds 0 1 2 3 4                  # matlab_cart, ~75 s/seed
 PYTHONPATH=. python scripts/run_py4_train.py --seeds 0 1 2 3 4 --engine sklearn  # ~7 s/seed
 ```
@@ -46,14 +46,14 @@ PYTHONPATH=. python scripts/run_py4_train.py --seeds 0 1 2 3 4 --engine sklearn 
 
 # Stage 1 (substrate CORAL / SND / RBL): Py2–Py4
 
-Paper run: `ReefCode/.../A3/Phase_Stage1/run_20260401_170150` (OneDrive copy; the original `C:\SAT` is gone). Script: `Code/Train_Stage1_LogRatio.m`. Stage 1 read Phase 5 features built from **true** reflectance on 1 Apr, so the Stage 2 double-scaling bug doesn't affect it.
+Paper run: `ReefCode/.../A3/Phase_Stage1/run_20260401_170150` (archived copy; the original working folder no longer exists). Script: `Code/Train_Stage1_LogRatio.m`. Stage 1 read Phase 5 features built from **true** reflectance on 1 Apr, so the Stage 2 double-scaling bug doesn't affect it.
 
 ## Inputs rebuilt (Py2): `coralremote/preprocess.py`
 The paper's `FEATURES_<date>.tif` files were lost, so they are rebuilt from code and the A3 config (`pipeline_logratio_config.mat`):
 - **Glint-corrected reflectance:** the surviving `GLINT_<date>.tif` files, otherwise the Source glint stack × 10,000.
 - **NaN masking**, in this order:
   - any raw band ≤ 0;
-  - UDM2 `clear` = 0, read from the raw scenes on `F:\Work_Backup\SAT\Data`;
+  - UDM2 `clear` = 0, read from the raw scenes (local archive);
   - wave pixels, where raw NIR > 0.07 inside the reef;
   - everything outside the Phase 2 reef mask.
 - **Features:** B/G1, G1/G2, B/R, DII_BR = log B − 0.82 log R, DII_GR = log G1 − 0.80 log R, with EPS 1e-6.

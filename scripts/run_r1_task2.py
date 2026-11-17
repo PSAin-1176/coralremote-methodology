@@ -25,7 +25,7 @@ from coralremote.preprocess import raw_stack
 from coralremote.train import build_training_sets
 from coralremote.units import COMPAT
 
-ACA_BATHY = "F:/Work_Backup/SAT/Code/Allen/bathymetry_0.tif"
+ACA_BATHY = str(paths.ACA_BATHY)
 OUT = paths.cache_dir() / "r1_task2.json"
 res = {}
 

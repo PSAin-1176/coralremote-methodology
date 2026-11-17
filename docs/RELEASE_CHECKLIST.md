@@ -1,30 +1,37 @@
-# Release checklist for v1.0.0 (author actions)
+# Release checklist for v1.0.0
 
-Everything below needs the author's explicit OK. Nothing has been pushed, tagged or published. Branch `python-port` lives only in the local clone, and its push URL is disabled.
+**Status (17 Nov 2026): ready to push; nothing has been pushed, tagged or published.**
+- The release branch is `python-port`. It fast-forwards from GitHub `main` (2c0d556), so no history is rewritten on GitHub.
+- The `github` remote is configured for fetching. Pushing needs the author's go-ahead.
 
-## Before pushing
-- [ ] Review the diff of `python-port` against `main`:
-  - the MATLAB tree moved to `legacy/matlab/`;
-  - the new `coralremote/`, `tests/`, `scripts/` and `docs/`.
-- [ ] Decide whether the internal port reports (`docs/PY4_*.md`, `PY5_*`, `PY6_*`) are public. They mention local folder names and unpublished R1 details. Options: keep them, trim them, or move them out of the repo.
-- [ ] Confirm that no data is tracked:
+## Done
+- [x] **No data tracked.** `git ls-files | grep -Ei '\.(mat|tif|tiff|npy|npz|h5)$'` prints nothing. `tests/golden/regression_tile.json` holds only aggregates (400-pixel means, fractions, class counts), the same kind of numbers the paper publishes.
+- [x] `paths.local.json` is untracked (`.gitignore`). No hard-coded local drive, user or cloud-storage paths remain outside `legacy/`. The Allen Coral Atlas path is now a setting (`aca_bathymetry`).
+- [x] **Commit identity:** every commit after `main` uses the author's academic address. The three `main` commits are already on GitHub and are not rewritten.
+- [x] **README:**
+  - MATLAB (`legacy/matlab/`) is the reference implementation of the paper;
+  - Python is the verified reimplementation (`compat` reproduces Tables 4–5; `fixed` corrects the input scaling);
+  - the units numbers match the paper's paired comparison (§3.5.6).
+- [x] **Version 1.0.0:** set in `pyproject.toml` and `coralremote/__init__.py`. The CHANGELOG is updated, and `CITATION.cff` has been added.
+- [x] **Internal port reports kept** (`docs/PY4–PY8`, `R1_LOO_DATE`). Local paths were removed. Their R1 details are the ones the revised paper discloses.
+- [x] **No second-manuscript material:** the change-detection work lives in a separate local repository, `coralremote-change`, which is not part of this release.
 
-  ```bash
-  git ls-files | grep -Ei '\.(mat|tif|tiff|npy|npz|h5)$'
-  ```
+## Push (author)
+1. Push only after the R1 manuscript is final, as decided on 17 Nov.
+2. Push the release branch:
 
-  This should print nothing. `tests/golden/regression_tile.json` holds only aggregates (means, fractions, class counts). Confirm that's acceptable under the Planet licence.
-- [ ] Check that `paths.local.json` is untracked (it's in `.gitignore`).
-- [ ] Decide on the AJSTR paper (plan §5): the units fix is material under the >2 pp Table 5 rule. Should the repository state this publicly at release, or only after the editor has been told?
+   ```bash
+   git push github python-port
+   ```
 
-## Publish
-1. Re-enable the push URL and push `python-port`; open a PR into `main` and merge after review.
-2. Set `version = "1.0.0"` in `pyproject.toml` and `coralremote/__init__.py`, and date the CHANGELOG entry.
-3. Tag and create the GitHub release:
+   Then open a PR into `main` on GitHub and merge it. Alternatively, fast-forward `main` directly: `git push github python-port:main`.
+3. Before creating a release, connect the repository to Zenodo (GitHub integration) so a DOI is minted.
+4. Tag and release:
 
    ```bash
    git tag -a v1.0.0 -m "CoralRemote 1.0.0"
+   git push github v1.0.0
    ```
 
-4. Connect the repository to Zenodo (GitHub integration) **before** creating the release, so a DOI is minted. Add the DOI badge and citation to the README.
-5. Optionally add a `CITATION.cff`.
+   Then create the GitHub release from the tag and date the CHANGELOG entry.
+5. Add the DOI badge to the README. At acceptance (or in round 2), replace "available from the corresponding author upon reasonable request" in the paper with the repository URL and DOI.

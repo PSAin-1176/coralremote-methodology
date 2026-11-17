@@ -2,7 +2,13 @@
 
 Python pipeline for mapping coral bleaching from PlanetScope SuperDove imagery: a log-ratio substrate screen (Stage 1), a consensus baseline coral mask, a hierarchical healthy / pale / bleached classifier (Stage 2) and an image-only wave diagnostic. Study site: Koh Man Nai, Rayong, Thailand, 14 dates from 2023 to 2025.
 
-Version 1.0 replaces the earlier MATLAB code, which is kept unchanged in [`legacy/matlab/`](legacy/matlab/README.md). The Python code was first checked against the MATLAB runs behind the AJSTR paper, then a reflectance-units error was fixed (see [Units](#units-and-known-issue)).
+The results in the AJSTR paper (Sa-ngadsup, Haq and Cheewinsiriwat, *Multitemporal PlanetScope-based assessment of spectral signatures of coral bleaching and recovery at Koh Man Nai, Gulf of Thailand*) were produced with the MATLAB code in [`legacy/matlab/`](legacy/matlab/README.md). It is kept unchanged as the reference implementation.
+
+The MATLAB licence was no longer available when the analyses requested in peer review were run, so the workflow was reimplemented in Python:
+- **`compat` mode:** loaded with the archived MATLAB-trained forests, it reproduces the paper's Tables 4 and 5 exactly.
+- **`fixed` mode:** corrects the input scaling described in Section 3.5.6 of the paper (see [Units](#units-and-known-issue)).
+
+The additional review analyses (leave-one-date-out, surface-state values, mask depth) are documented in [docs/R1_LOO_DATE.md](docs/R1_LOO_DATE.md).
 
 ## What's in it
 | Module | Content |
@@ -31,9 +37,12 @@ Where each MATLAB script is reproduced: [docs/PROVENANCE.md](docs/PROVENANCE.md)
 ## Units and known issue
 All arrays are surface reflectance on a 0–1 scale. Reflectance features use an explicit floor of 1e-4 reflectance (`units.FIXED`). Details and Methods wording: [docs/UNITS.md](docs/UNITS.md).
 
-The source stacks behind the AJSTR paper (built 5 Apr 2026) divided reflectance by 10,000 twice. The 1e-6 floor in Stage 2 then acted as a 0.01 reflectance floor and clipped NIR on 23–84% of coral-mask pixels on five dates. `units.COMPAT` reproduces that behaviour exactly, for parity only. Re-running with correct units:
-- leaves OA (−0.4 pp), F1 (≤ 0.015) and every date's dominant class unchanged;
-- moves some Table 5 cells by more than 2 pp, for example 20240620 BLD +4.7 pp and 20240514 PLE +9 pp / UNK −9 pp.
+The source stacks behind the AJSTR paper (built 5 Apr 2026) divided reflectance by 10,000 twice. The 1e-6 floor in Stage 2 then acted as a 0.01 reflectance floor and clipped NIR on 23–84% of coral-mask pixels on five dates. `units.COMPAT` reproduces that behaviour exactly, for parity only. The paper discloses this (Section 3.5.6) and keeps its tables as originally computed.
+
+Paired comparison: five Python retrainings in each mode, same procedure; the corrected floor is 1e-4 and the PLE curation is recomputed (81 vs 88 polygons).
+- Mean OA moves from 97.3% to 97.1%; the archived MATLAB model scores 97.5%.
+- Every date's dominant class is unchanged.
+- Mean class fractions move by up to 9 pp, most on 20240514 (PLE 25.9% → 35.0%).
 
 See [PY6_FIX_AND_RERUN.md](docs/PY6_FIX_AND_RERUN.md). Stage 1, the baseline mask, the wave diagnostic and the training labels aren't affected.
 
