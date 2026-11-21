@@ -5,6 +5,12 @@
 ### R1 revision runner (`r1/`)
 - `r1/revision_runner.py` produces the R1 tables: re-estimated pooled StableSand OLS coefficients (0.381 and 0.374), true-reflectance Stage 1 features, the 20,460-pixel consensus mask, corrected-reflectance hierarchical Stage 2 (Tables 2, 4A, 4B and 5), seeds 0 to 2, the date-specific calibration policy, the June date-omission tests and the leave-one-polygon-out test (Supplement S1, S3 and S4).
 - `r1/table3_retest.py` produces the Table 3 feature-family ablation on the Table 4A held-out design.
+- `r1/table3_spatial_cv.py` rebuilds the Table 3 spatial-CV column and the earlier exploratory test column (S2).
+- `r1/make_tables.py` rebuilds the summary tables and context statistics (Tables 2, 4A, 4B and 5; S1, S3, S4 and S5) from a completed run without refitting.
+- `r1/calibration_sensitivity.py` rebuilds the S1 sensitivities (largest polygon, Lyzenga estimator, deep-water subtraction).
+- `r1/scenes.csv` lists the 14 PlanetScope scene identifiers and times (S7); `r1/scenes.py` rebuilds it from licensed item metadata.
+- Each of these scripts was run against the stored R1 outputs and reproduced them (numbers to 1e-9; model fits bit for bit).
+- Code identity checks use LF line endings, so Windows and Unix checkouts give the same hashes.
 - `r1/legacy_replay.py` replays the archived Stage 2 models in `compat` mode (submitted results; provenance only).
 - `r1/revision_config*.json` identify each input by SHA-256 and size (seeds 0, 1, 2). Paths are placeholders resolved from `CORALREMOTE_ROOT`, `CORALREMOTE_A3_ROOT`, `REVISION_UDM` and `CORALREMOTE_STABLESAND`. The runner needs `CORALREMOTE_ROOT` and imports this repository's `coralremote` package (byte-identical to the one the R1 runs used).
 - README results framing rewritten: the R1 tables come from `r1/`; `compat` mode reproduces the submitted tables and is kept for provenance; `fixed` corrects the input scaling. `docs/INPUTS.md` lists StableSand and the coregistered UDM2 flag files as inputs.

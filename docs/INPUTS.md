@@ -73,6 +73,8 @@ One NPZ per date, holding the Planet usable-data flags (UDM2, array `udm2`) core
 |---|---|---|---|---|---|
 | `<ROOT>/Asset/baseline_coral_mask.mat` | `baseline_coral_mask`, `H`, `W`, `reef_mask`, `vote_map`, `tier_map`, `mask0`, `maskClean`, `maskPeel`, `maskFinal` | Logical / uint8 | `Baseline_Coral/run_20260401_103612` + 6 Apr clean-up | 252,461 | `e1108ff43bd81e90bab023d8ef14c83e9005e0e88c5cb98b2953ddb3c611b57d` |
 | `<A3>/Phase2_Masking/run_20260401_102458/reef_mask.tif` | Reef polygon raster | uint8 | Phase 2 | 31,818 | `44320c4de1cb6024bbe2d851efa0c58b24cdb4ac27fadad70075a118879ddace` |
+| `<A3>/Phase2_Masking/run_20260401_102458/bm_deep_mask.tif` | Large-scale deep-water mask (atlas depth > 3 m or the manual deep-water polygon); `r1/calibration_sensitivity.py` | uint8 | Phase 2 | 136,314 | `52206c45d0004572d1115ac1deb5eecba4e871fb73c806ae5e459c21cddcc120` |
+| `<A3>/Phase2_Masking/run_20260401_102458/mdeep_mask.tif` | Manual deep-water polygon raster (deepest subset); `r1/calibration_sensitivity.py` | uint8 | Phase 2 | 30,962 | `4a099d11ccfb1de1c17a328620c970923ac46b1936a2a445efe21714c6c87196` |
 | `<A3>/Phase9_Classify/run_20260401_102734/CLASS_20230404.tif` | Stage 1 class map (0–4) | uint8 | Phase 9 (from the lost Stage 1 model `run_20260401_102559`) | 121,524 | `d04f18e76abb17db89cb3f40d1f21efd06c4c188d1c76f84c6b5584aaebee136` |
 | `…/CLASS_20230509.tif` | as above | | | 114,174 | `ce190334eb94ebc536c405b2674cd1adcf8a1b4a935f4b37aa6eceb68686ad0c` |
 | `…/CLASS_20240307.tif` | as above | | | 131,218 | `988123212c3909d3abcef92907f55621898de96bd2d838c2c553a1e80a5f18c4` |

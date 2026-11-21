@@ -15,10 +15,13 @@ The MATLAB licence was no longer available when the analyses requested in peer r
 | Manuscript item | Source |
 |---|---|
 | Tables 2, 4 and 5; the 20,460-pixel baseline mask; the pooled StableSand OLS coefficients (0.381 and 0.374, printed 0.38 and 0.37); Supplement S1 (calibration), S3 (seeds 0 to 2 and the date-specific policy) and S4 (June date omission) | [`r1/revision_runner.py`](r1/revision_runner.py) with the configurations in `r1/` |
-| Table 3 (feature ablation) | [`r1/table3_retest.py`](r1/table3_retest.py) |
+| Table 3 (feature ablation): test columns and spatial-CV column | [`r1/table3_retest.py`](r1/table3_retest.py), [`r1/table3_spatial_cv.py`](r1/table3_spatial_cv.py) |
+| Summary tables and context statistics (Tables 2, 4A, 4B, 5; S1, S3 to S5) | [`r1/make_tables.py`](r1/make_tables.py) from a completed run |
+| S1 calibration sensitivities (largest polygon, Lyzenga estimator, deep-water subtraction) | [`r1/calibration_sensitivity.py`](r1/calibration_sensitivity.py) |
+| S7 scene identifiers | [`r1/scenes.csv`](r1/scenes.csv) |
 | Submitted (pre-revision) Tables 4 and 5, and the 20,330-pixel mask | `compat` mode ([`scripts/run_frozen_stage2.py`](scripts/run_frozen_stage2.py), [`r1/legacy_replay.py`](r1/legacy_replay.py)) |
 
-[`r1/README.md`](r1/README.md) lists the settings, the commands, and the command and output file behind each table and supplement section, with the items that could not be verified marked as such. The earlier review analyses on the submitted configuration (leave-one-date-out, surface-state values, mask depth) are in [docs/R1_LOO_DATE.md](docs/R1_LOO_DATE.md). They are superseded where the R1 paper reports a rebuilt value.
+[`r1/README.md`](r1/README.md) lists the settings, the commands, and the command and output file behind each table and supplement section, each checked by rerunning the release scripts against the stored R1 outputs. Only the S2 table of the earlier binary analysis is not rebuilt: it reports archived results of the submitted workflow. The earlier review analyses on the submitted configuration (leave-one-date-out, surface-state values, mask depth) are in [docs/R1_LOO_DATE.md](docs/R1_LOO_DATE.md). They are superseded where the R1 paper reports a rebuilt value.
 
 ## What's in it
 | Module | Content |

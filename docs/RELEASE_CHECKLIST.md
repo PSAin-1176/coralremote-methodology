@@ -27,11 +27,12 @@
 - [x] **No second-manuscript material:** the change-detection work lives in a separate local repository, `coralremote-change`, which is not part of this release.
 
 ## R1 additions
-- [x] `r1/` holds the R1 runner, `legacy_replay.py`, `table3_retest.py`, three configurations and `r1/README.md`. Configuration paths are placeholders; every SHA-256 and size is unchanged.
+- [x] `r1/` holds the R1 runner, `legacy_replay.py`, `table3_retest.py`, `table3_spatial_cv.py`, `make_tables.py`, `calibration_sensitivity.py`, `scenes.csv`/`scenes.py`, three configurations and `r1/README.md`. Configuration paths are placeholders; every SHA-256 and size is unchanged.
 - [x] README results framing: R1 tables come from `r1/`; `compat` reproduces the submitted tables (provenance); `fixed` corrects the input scaling.
 - [x] `docs/INPUTS.md` lists StableSand and the coregistered UDM2 flag files by hash and size.
 - [ ] Codex pre-push review of the `r1-release` diff.
-- [ ] Items marked unverified in `r1/README.md` checked, or accepted as unverified.
+- [x] Every R1 table and supplement item is mapped to a release script in `r1/README.md` and was reproduced from the stored outputs (21 Nov 2026), except the archived S2 binary-analysis table.
+- [x] Code identity hashes are line-ending neutral (LF).
 
 ## Push (author)
 1. Push only after the R1 manuscript is final and the author gives the go-ahead.
