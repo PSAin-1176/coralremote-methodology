@@ -1,9 +1,16 @@
 # Changelog
 
-## 1.0.0 (prepared 17 Nov 2026; date set when tagged)
+## 1.0.0 (unreleased; date set when tagged)
+
+### R1 revision runner (`r1/`)
+- `r1/revision_runner.py` produces the R1 tables: re-estimated pooled StableSand OLS coefficients (0.381 and 0.374), true-reflectance Stage 1 features, the 20,460-pixel consensus mask, corrected-reflectance hierarchical Stage 2 (Tables 2, 4A, 4B and 5), seeds 0 to 2, the date-specific calibration policy, the June date-omission tests and the leave-one-polygon-out test (Supplement S1, S3 and S4).
+- `r1/table3_retest.py` produces the Table 3 feature-family ablation on the Table 4A held-out design.
+- `r1/legacy_replay.py` replays the archived Stage 2 models in `compat` mode (submitted results; provenance only).
+- `r1/revision_config*.json` identify each input by SHA-256 and size (seeds 0, 1, 2). Paths are placeholders resolved from `CORALREMOTE_ROOT`, `CORALREMOTE_A3_ROOT`, `REVISION_UDM` and `CORALREMOTE_STABLESAND`. The runner needs `CORALREMOTE_ROOT` and imports this repository's `coralremote` package (byte-identical to the one the R1 runs used).
+- README results framing rewritten: the R1 tables come from `r1/`; `compat` mode reproduces the submitted tables and is kept for provenance; `fixed` corrects the input scaling. `docs/INPUTS.md` lists StableSand and the coregistered UDM2 flag files as inputs.
 
 ### Peer-review analyses (AJSTR R1)
-- Leave-one-June-date-out Stage 2 test, surface-state values, mask depth and Stage 1 LOO provenance: `docs/R1_LOO_DATE.md`, `scripts/run_r1_*.py`.
+- Leave-one-June-date-out Stage 2 test, surface-state values, mask depth and Stage 1 LOO provenance on the submitted configuration: `docs/R1_LOO_DATE.md`, `scripts/run_r1_*.py`. Where the R1 paper reports a rebuilt value, it comes from `r1/`.
 - Machine-local Allen Coral Atlas bathymetry path (`aca_bathymetry` / `CORALREMOTE_ACA_BATHY`); no hard-coded local paths remain.
 
 
