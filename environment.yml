@@ -16,5 +16,6 @@ dependencies:
   - pip
   - pip:
       - mat-io==1.0.2   # required: reads the saved MATLAB TreeBagger models (tested version)
+      - tzdata          # IANA time zones for zoneinfo (r1/ logging); Windows Python has no system copy
 # Not required by this package: arosics, pyproj, geopandas/shapely
 # (co-registration and vector tools of the original workflow are not ported).

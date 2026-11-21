@@ -11,6 +11,9 @@
 - `r1/scenes.csv` lists the 14 PlanetScope scene identifiers and times (S7); `r1/scenes.py` rebuilds it from licensed item metadata.
 - Each of these scripts was run against the stored R1 outputs and reproduced them (numbers to 1e-9; model fits bit for bit).
 - Code identity checks use LF line endings, so Windows and Unix checkouts give the same hashes.
+- `revision_runner.py validate --config <file>` checks inputs and code identity without writing; the staged commands do not repeat these checks.
+- Every `r1/` script refuses output inside the protected source folders or a configured input location (also for the failure log).
+- `tzdata` added to the dependencies (zoneinfo needs IANA time zones; Windows Python has none).
 - `r1/legacy_replay.py` replays the archived Stage 2 models in `compat` mode (submitted results; provenance only).
 - `r1/revision_config*.json` identify each input by SHA-256 and size (seeds 0, 1, 2). Paths are placeholders resolved from `CORALREMOTE_ROOT`, `CORALREMOTE_A3_ROOT`, `REVISION_UDM` and `CORALREMOTE_STABLESAND`. The runner needs `CORALREMOTE_ROOT` and imports this repository's `coralremote` package (byte-identical to the one the R1 runs used).
 - README results framing rewritten: the R1 tables come from `r1/`; `compat` mode reproduces the submitted tables and is kept for provenance; `fixed` corrects the input scaling. `docs/INPUTS.md` lists StableSand and the coregistered UDM2 flag files as inputs.

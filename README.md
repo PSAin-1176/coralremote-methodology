@@ -75,7 +75,7 @@ No imagery, reflectance stacks, feature stacks or model files are in this reposi
 
 The R1 commands also take placeholders for the input folders; see [r1/README.md](r1/README.md). The full list of inputs (files, variables, units, grid, original run IDs, SHA-256 checksums, and how each can be obtained or rebuilt) is in [docs/INPUTS.md](docs/INPUTS.md). Most commands need archived products that only the author can supply; that file says which.
 
-Every write by the package and scripts goes through `paths.assert_writable`, which refuses paths inside the protected source folders (`paths.READ_ONLY_DIRS`). This covers the cache folder, forest exports and the scripts' output arguments (`--json` and similar). Derived arrays go to the cache folder. The cache is keyed on the source file's path, size and modification time, so a replaced input is re-read rather than served from a stale cache.
+Every write by the package and scripts goes through `paths.assert_writable`, which refuses paths inside the protected source folders (`paths.READ_ONLY_DIRS`). This covers the cache folder, forest exports and the scripts' output arguments (`--json` and similar). The `r1/` scripts also refuse output inside any configured input location (A3 outputs, UDM2 flags, StableSand, deep-water masks, bathymetry, scene records). Derived arrays go to the cache folder. The cache is keyed on the source file's path, size and modification time, so a replaced input is re-read rather than served from a stale cache.
 
 ## Tests
 ```bash

@@ -7,7 +7,7 @@ name = "coralremote"
 version = "1.0.0"
 description = "PlanetScope coral bleaching pipeline (Python port of the CoralRemote MATLAB methodology)"
 requires-python = ">=3.11"
-dependencies = ["numpy", "scipy", "h5py", "rasterio", "scikit-image", "scikit-learn", "mat-io"]
+dependencies = ["numpy", "scipy", "h5py", "rasterio", "scikit-image", "scikit-learn", "mat-io", "tzdata"]
 license = {file = "LICENSE"}
 readme = "README.md"
 

@@ -26,7 +26,11 @@ def main():
         assert j['id'] == sid
         rows.append(dict(date=sid[:8], scene_id=sid, acquired_utc=p['datetime'], item_type=p['pl:item_type'], instrument=';'.join(p['instruments']),
                          sun_elevation_deg=p.get('view:sun_elevation'), sun_azimuth_deg=p.get('view:sun_azimuth'), off_nadir_deg=p.get('view:off_nadir')))
-    out = Path(os.environ.get('SCENES_OUT') or HERE / 'output' / 'scenes.csv'); out.parent.mkdir(parents=True, exist_ok=True)
+    out = Path(os.environ.get('SCENES_OUT') or HERE / 'output' / 'scenes.csv')
+    out = out.resolve()
+    if out.is_relative_to(Path(src).resolve()):
+        raise PermissionError(f'{out} is inside the input folder {src}')
+    out.parent.mkdir(parents=True, exist_ok=True)
     with out.open('w', newline='', encoding='utf-8') as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0])); w.writeheader(); w.writerows(rows)
     print(f'{len(rows)} scenes written to {out}')

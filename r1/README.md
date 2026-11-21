@@ -33,36 +33,42 @@ Paths in the configurations are placeholders. Set these environment variables be
 | `PLANET_SCENES` | `scenes.py`: folder of the Planet STAC item records `<scene id>.json` |
 | `TABLES_OUT`, `TABLE3_CV_OUT`, `CALIB_OUT`, `SCENES_OUT` | Optional output folders (default under `r1/output/`) |
 
-The runner stops with a clear error if `CORALREMOTE_ROOT` is missing. Before any output is written, `primary` checks every input hash in the configuration and the code identity (`vendor/coralremote/*` entries are compared with this repository's `coralremote/*`, and the two entry-point scripts with their released versions; code hashes use LF line endings, so Windows and Unix checkouts give the same result). Existing inconsistent caches are rejected.
+The runner stops with a clear error if `CORALREMOTE_ROOT` is missing. `validate` and `primary` check every input hash in a configuration and the code identity (`vendor/coralremote/*` entries are compared with this repository's `coralremote/*`, and the two entry-point scripts with their released versions; code hashes use LF line endings, so Windows and Unix checkouts give the same result), and reject inconsistent caches, before any scientific output is written. A failed command records its traceback under `<OUT>/failures/`. The staged commands do not repeat these checks and reuse existing outputs in `<OUT>`, so run `validate` for each configuration first and start from empty output and cache folders. Every script refuses to write inside the protected source folders or any configured input location.
 
 ## Commands
 
-Run from the repository root. The full pipeline takes hours; use new output and cache folders.
+Run from the repository root. The full pipeline takes hours. The full run below is what the R1 tables come from; the single-seed `primary` runs reproduce one seed's mask and models but are not a substitute for it.
 
 ```bash
-# Primary run for one seed (calibration, Stage 1 mask and accuracy models, mask, Stage 2)
-python r1/revision_runner.py primary --config r1/revision_config.json --out <OUT> --cache <OUT>/cache
-python r1/revision_runner.py primary --config r1/revision_config_seed1.json --out <OUT_SEED1> --cache <OUT_SEED1>/cache
-python r1/revision_runner.py primary --config r1/revision_config_seed2.json --out <OUT_SEED2> --cache <OUT_SEED2>/cache
+# 1. Check inputs and code identity for each configuration (writes nothing)
+python r1/revision_runner.py validate --config r1/revision_config.json
+python r1/revision_runner.py validate --config r1/revision_config_seed1.json
+python r1/revision_runner.py validate --config r1/revision_config_seed2.json
 
-# Staged commands for the full revision run (all policies, seeds and sensitivity tests)
-# in this order, each with --out <OUT>: freeze, calibrate, prepare, stage1, select, stage2, loo, omissions
-python r1/revision_runner.py calibrate --out <OUT>
+# 2. Full revision run (all policies, seeds and sensitivity tests) into one new folder <RUN>
+for c in freeze calibrate prepare stage1 select stage2 loo omissions; do
+  python r1/revision_runner.py $c --out <RUN>
+done
 
-# Table 3: spatial-CV column first, then the test columns (needs the completed run in REVISION_RUN)
-python r1/table3_spatial_cv.py
-python r1/table3_retest.py
+# 3. Summary tables into the run's report folder (Table 3 reads report/stage1_accuracy.csv from there)
+REVISION_RUN=<RUN> TABLES_OUT=<RUN>/report python r1/make_tables.py
 
-# Summary tables, S1 sensitivities and the scene list
-python r1/make_tables.py
+# 4. Table 3: spatial-CV column, then the test columns
+TABLE3_CV_OUT=<CV> python r1/table3_spatial_cv.py
+REVISION_RUN=<RUN> REVISION_OLD_RUN=<CV> python r1/table3_retest.py
+
+# 5. S1 sensitivities and the S7 scene list
 python r1/calibration_sensitivity.py
 python r1/scenes.py
+
+# Optional: one seed only, with its own output and cache folders
+python r1/revision_runner.py primary --config r1/revision_config.json --out <OUT> --cache <OUT>/cache
 
 # Archived (submitted) Stage 2 replay in compat mode
 python r1/legacy_replay.py --json legacy_replay.json
 ```
 
-Software used for the R1 runs: Python 3.13.9, numpy 2.4.4, scipy 1.16.3, scikit-learn 1.7.2, rasterio 1.5.0, h5py 3.15.1, matplotlib 3.10.6 and, for `legacy_replay.py`, mat-io 1.0.2. Runs used one thread per worker.
+Software used for the R1 runs: Python 3.13.9, numpy 2.4.4, scipy 1.16.3, scikit-learn 1.7.2, rasterio 1.5.0, h5py 3.15.1, matplotlib 3.10.6, tzdata (IANA time zones for logging on Windows) and, for `legacy_replay.py`, mat-io 1.0.2. Runs used one thread per worker.
 
 ## Which command produces which manuscript item
 

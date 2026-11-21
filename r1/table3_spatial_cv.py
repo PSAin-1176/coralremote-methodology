@@ -41,7 +41,7 @@ from coralremote.evaluate import compute_metrics3  # noqa: E402
 from coralremote.matlab_compat import find_colmajor  # noqa: E402
 from coralremote.rasterize import rasterize_labels_stage1  # noqa: E402
 
-OUT = Path(os.environ.get('TABLE3_CV_OUT') or HERE / 'output' / 'table3_cv')
+OUT = r.guard_out(Path(os.environ.get('TABLE3_CV_OUT') or HERE / 'output' / 'table3_cv'))
 ABL = OUT / 'stage1_ablation'
 SEEDS = (0, 1, 2)
 FEATURE_SETS = {'R': [0, 1, 2], 'R+B': [0, 1, 2, 3], 'R+G': [0, 1, 2, 4], 'R+BG': [0, 1, 2, 3, 4]}

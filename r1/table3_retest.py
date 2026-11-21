@@ -237,6 +237,7 @@ def git_hash(repo):
 
 def main():
     t0 = time.time()
+    rr.guard_out(OUT)
     OUT.mkdir(parents=True, exist_ok=True)
     assert Path(coralremote.__file__).resolve().parent == (PORT / 'coralremote').resolve(), coralremote.__file__
     assert FEATURE_NAMES == ('B/G1', 'G1/G2', 'B/R', 'DII_BR', 'DII_GR') or len(FEATURE_NAMES) == 5, FEATURE_NAMES

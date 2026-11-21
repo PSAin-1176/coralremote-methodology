@@ -185,7 +185,7 @@ def main():
         for b, i in BANDS.items():
             row[f'frac_le_Linf_median_BM_{b}'] = float(np.mean(GL[d][:, :, i][ok] - LINF[('BM', 'median')][d][b] <= FLOOR))
         reef_rows.append(row)
-    OUTD.mkdir(parents=True, exist_ok=True)
+    rr.guard_out(OUTD); OUTD.mkdir(parents=True, exist_ok=True)
     rr.csvsave(OUTD / 'results.csv', results); rr.csvsave(OUTD / 'per_date.csv', per_date)
     rr.csvsave(OUTD / 'deepwater.csv', deep_rows); rr.csvsave(OUTD / 'paired_bootstrap.csv', paired)
     rr.csvsave(OUTD / 'reef_below_deepwater.csv', reef_rows)

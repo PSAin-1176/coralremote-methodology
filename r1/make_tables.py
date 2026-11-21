@@ -59,7 +59,7 @@ from scipy.stats import pearsonr                  # noqa: E402
 from coralremote.train import build_training_sets  # noqa: E402
 
 P = r.OUT
-OUT = Path(os.environ.get('TABLES_OUT') or HERE / 'output' / 'tables')
+OUT = r.guard_out(Path(os.environ.get('TABLES_OUT') or HERE / 'output' / 'tables'))
 OUT.mkdir(parents=True, exist_ok=True)
 DHW = [0, .91, 2.46, 2.46, 0, 0, .33, 7.57, 9.71, 9.71, 9.71, 0, 0, 1.09]   # Table 1, in stack date order
 

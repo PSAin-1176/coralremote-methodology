@@ -43,6 +43,17 @@ def stablesand_path():
     v=os.environ.get('CORALREMOTE_STABLESAND')
     if not v:raise RuntimeError('CORALREMOTE_STABLESAND is not set. Set it to the StableSand.geojson file identified in the configuration.')
     return Path(v)
+def guard_out(p):
+    # Refuse output inside the protected source folders (paths.READ_ONLY_DIRS) or any configured input location.
+    p=paths.assert_writable(p);inputs=[paths.A3_ROOT,UDM]
+    for k in ('CORALREMOTE_STABLESAND','DEEP_MASK_BM','DEEP_MASK_MDEEP','CORALREMOTE_ACA_BATHY'):
+        if os.environ.get(k):inputs.append(Path(os.environ[k]).parent)
+    if os.environ.get('PLANET_SCENES'):inputs.append(Path(os.environ['PLANET_SCENES']))
+    for d in inputs:
+        try:p.relative_to(Path(d).resolve())
+        except ValueError:continue
+        raise PermissionError(f'{p} is inside input location {d}')
+    return p
 def expand(s):
     # Resolve ${NAME} placeholders in configuration paths.
     known={'CORALREMOTE_ROOT':str(ROOT),'CORALREMOTE_A3_ROOT':str(paths.A3_ROOT),'REVISION_UDM':str(UDM)}
@@ -407,6 +418,8 @@ def main():
     global OUT,WORKERS
     ap=argparse.ArgumentParser();ap.add_argument('command');ap.add_argument('--out');ap.add_argument('--workers',type=int,default=WORKERS);ap.add_argument('--config');ap.add_argument('--cache');a=ap.parse_args()
     if a.out:OUT=Path(a.out);os.environ['REVISION_OUT']=str(OUT)
+    guard_out(OUT)
+    if a.cache:guard_out(a.cache)
     WORKERS=a.workers;os.environ['REVISION_WORKERS']=str(WORKERS)
     if a.command=='freeze':freeze()
     elif a.command=='calibrate':calibrate()
@@ -417,8 +430,11 @@ def main():
     elif a.command=='omissions':run_omissions()
     elif a.command=='loo':run_loo()
     elif a.command=='primary':primary(a.config,a.cache)
+    elif a.command=='validate':preflight(load(a.config),a.cache)  # input and code identity only; writes nothing
     else:raise ValueError(a.command)
 if __name__=='__main__':
     try:main()
     except Exception:
-        save(OUT/f'failures/command_{time.time_ns()}.json',dict(command=sys.argv,traceback=traceback.format_exc()));raise
+        try:guard_out(OUT);save(OUT/f'failures/command_{time.time_ns()}.json',dict(command=sys.argv,traceback=traceback.format_exc()))
+        except PermissionError:pass
+        raise
