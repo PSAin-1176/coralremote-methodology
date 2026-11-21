@@ -21,7 +21,7 @@
   - Stage 1 OOB, test and transfer results are exact;
   - the baseline mask is exact to 0 px;
   - all 14 wave verdicts match.
-- The earlier public MATLAB workflow (two-class Stage 2; not the code that produced the AJSTR results) moved unchanged to `legacy/matlab/`. It is frozen. The paper's original MATLAB scripts are not in this repository; see `docs/PROVENANCE.md`.
+- Removed the earlier two-class MATLAB prototype (`legacy/matlab/`). It was not the workflow used in the paper. It is preserved in the history at commit 2c0d556 (tag `matlab-prototype`). The paper's original MATLAB scripts are not in this repository; see `docs/PROVENANCE.md`.
 
 ### Fixed: reflectance double-scaling in the Stage 2 inputs
 - The source stacks used for the AJSTR Stage 2 analysis (built 5 Apr 2026) divided PlanetScope SR by 10,000 twice. The bare 1e-6 feature floor therefore acted as a 0.01-reflectance floor and clipped NIR on 23–84% of coral-mask pixels on five dates (most on 20240307).
@@ -32,7 +32,7 @@
   - dominant class unchanged on every date;
   - some class fractions move by more than 2 pp: 20240620 BLD +4.7 pp, and on 20240514 PLE +9 pp / UNK −9 pp.
 - Stage 1, the baseline mask, the wave diagnostic and the label polygons aren't affected.
-- The earlier public MATLAB code (now `legacy/matlab/`) never had this bug: it divides once, on GeoTIFF input.
+- The earlier two-class MATLAB prototype (removed; see above) never had this bug: it divides once, on GeoTIFF input.
 
 ### Added
 - Unit contract: `assert_reflectance` on load; scale-invariance and NIR-identity tests.

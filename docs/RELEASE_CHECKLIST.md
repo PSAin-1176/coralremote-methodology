@@ -11,7 +11,7 @@
 - [x] `paths.local.json` is untracked (`.gitignore`). No active machine-specific path defaults remain in code: path settings come from `paths.local.json` or environment variables. Explanatory references to the original `C:/SAT` locations remain in docstrings and provenance notes, and `paths.example.json` contains placeholder Windows paths. The Allen Coral Atlas path is now a setting (`aca_bathymetry`).
 - [x] **Commit identity:** every commit after `main` uses the author's academic address. The three `main` commits are already on GitHub and are not rewritten.
 - [x] **README:**
-  - the paper's results came from the author's original MATLAB workflow (surviving scripts and archived outputs listed in `docs/PROVENANCE.md`, not in this repository); `legacy/matlab/` is an earlier public two-class workflow, not the paper's code;
+  - the paper's results came from the author's original MATLAB workflow (surviving scripts and archived outputs listed in `docs/PROVENANCE.md`, not in this repository); the earlier two-class MATLAB prototype was removed (history: commit 2c0d556, tag `matlab-prototype`);
   - Python is the verified reimplementation (`compat` reproduces Tables 4–5; `fixed` corrects the input scaling);
   - the units numbers match the paper's paired comparison (§3.5.6).
 - [x] **Version 1.0.0:** set in `pyproject.toml` and `coralremote/__init__.py`. The CHANGELOG is updated, and `CITATION.cff` has been added.
@@ -48,6 +48,7 @@
    ```bash
    git tag -a v1.0.0 -m "CoralRemote 1.0.0 (AJSTR R1)"
    git push github v1.0.0
+   git push github matlab-prototype   # tag on 2c0d556 (created locally), keeps a link to the removed MATLAB prototype
    ```
 
    Then create the GitHub release from the tag (Zenodo mints the DOI) and date the CHANGELOG entry.

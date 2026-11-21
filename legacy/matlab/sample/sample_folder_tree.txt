@@ -1,6 +1,0 @@
-CoralRemoteData/
-  raw/
-    cropped_common_extent/
-  ancillary/
-  output_logratio/
-  prepared_source_logratio/

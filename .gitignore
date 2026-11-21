@@ -13,9 +13,6 @@ __pycache__/
 *.pyc
 
 # MATLAB / local config
-legacy/matlab/config/paths_local.m
-legacy/matlab/config/*.local.m
-legacy/matlab/config/*_local.m
 pipeline_logratio_config.mat
 *.prj
 
@@ -43,21 +40,6 @@ pipeline_logratio_config.mat
 *.xlsx
 
 # Allow only curated sample files in the sample tree
-!legacy/matlab/sample/
-!legacy/matlab/sample/README.md
-!legacy/matlab/sample/sample_manifest.csv
-!legacy/matlab/sample/sample_dates.txt
-!legacy/matlab/sample/sample_folder_tree.txt
-!legacy/matlab/sample/sample_config_notes.md
-!legacy/matlab/sample/processed_examples/
-!legacy/matlab/sample/processed_examples/README.md
-!legacy/matlab/sample/processed_examples/*.tif
-!legacy/matlab/sample/processed_examples/*.tiff
-!legacy/matlab/sample/processed_examples/*.png
-!legacy/matlab/sample/processed_examples/*.jpg
-!legacy/matlab/sample/processed_examples/*.jpeg
-!legacy/matlab/sample/processed_examples/*.csv
-!legacy/matlab/sample/processed_examples/*.txt
 
 # Logs / run artifacts
 *.log
