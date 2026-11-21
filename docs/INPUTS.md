@@ -6,7 +6,9 @@ None of the files below is in this repository. Point the package to them with `p
 - `<ROOT>` = `CORALREMOTE_ROOT`;
 - `<A3>` = `CORALREMOTE_A3_ROOT`;
 - `<RAW>` = `CORALREMOTE_RAW_PLANET`;
-- `<ACA>` = the folder of `CORALREMOTE_ACA_BATHY`.
+- `<ACA>` = the folder of `CORALREMOTE_ACA_BATHY`;
+- `<UDM>` = `REVISION_UDM`, the folder of the coregistered UDM2 flag files (R1 runner only);
+- `<STABLESAND>` = `CORALREMOTE_STABLESAND`, the StableSand GeoJSON file (R1 runner only).
 
 **Analysis grid:** 1,366 rows × 1,078 columns, 3 m cells, WGS 84 / UTM zone 47N (EPSG:32647). All stacks, masks and class maps below are on this grid unless stated otherwise.
 
@@ -50,6 +52,21 @@ Surviving Phase 3 GLINT GeoTIFFs (8 of the original 14):
 
 **Rebuilding:** the Python `preprocess` module rebuilds the Stage 1 features from the raw stack plus the UDM2 masks. The 5 Apr Source stack builder itself is lost, so the two Source stacks can't be regenerated bit for bit from Planet scenes with this repository alone. They need Phase 1 co-registration (AROSICS, not ported) and the Hedley glint step on the exact scenes.
 
+## 2b. Coregistered UDM2 flag files (required by the R1 runner)
+
+One NPZ per date, holding the Planet usable-data flags (UDM2, array `udm2`) coregistered to the analysis grid. They contain no reflectance but derive from licensed Planet products, so obtain them from the author. Eight dates are needed (the Stage 1 dates). Checksums as in `r1/revision_config.json`.
+
+| File | Size (bytes) | SHA-256 |
+|---|---|---|
+| `<UDM>/udm2_20230404.npz` | 55,853 | `3eaef3014ea13932bf7c4bf77cae21ee735c35bca112b04c19ea19f7b565ee86` |
+| `<UDM>/udm2_20230509.npz` | 76,242 | `3f010f6008ac4d03d9964089da514cedb5e7bb9436484f81c353b49802455bc7` |
+| `<UDM>/udm2_20230519.npz` | 74,467 | `5342b4a2b9df3c08e296f1df634a9484f41ac8ee2407b67259549e8c062beb67` |
+| `<UDM>/udm2_20230629.npz` | 168,295 | `3592fae62ddd77f82fb10613ce8f933ee2db1b1dc7b75f1f07cddaf943fb6d2f` |
+| `<UDM>/udm2_20240307.npz` | 69,331 | `fb062570acb19a782e8c4b29e9f1b3ab781e52a2a82579e1be4c63beefb27093` |
+| `<UDM>/udm2_20240317.npz` | 73,999 | `04f73b1992d3a4122ff33aacb3a04476a8b5eb89b31c20372436534ab619b035` |
+| `<UDM>/udm2_20240408.npz` | 97,905 | `2d4cb79b9cd7528cfb61249c7c53df01e541ce30de5129f4727824e7f564a210` |
+| `<UDM>/udm2_20241111.npz` | 48,045 | `095b82316f36e2dd8104a95b433d500b15ec1cad6d1e17fe7ace1239954a590f` |
+
 ## 3. Masks and class maps (no reflectance)
 
 | File | Variable(s) / content | Units | Original run | Size (bytes) | SHA-256 |
@@ -68,7 +85,7 @@ Surviving Phase 3 GLINT GeoTIFFs (8 of the original 14):
 
 ## 4. Label GeoJSONs (automatic labels; no reflectance)
 
-All are EPSG:4326 polygons with `Class`, `date`, `spatial_block` and `train_eligible` properties. They come from the author's `Autolabel/` scripts (see [R1_LOO_DATE.md](R1_LOO_DATE.md), BLD label source), which are not ported. Obtain them from the author.
+All are EPSG:4326 polygons (the StableSand file has its own properties) and the others carry `Class`, `date`, `spatial_block` and `train_eligible` properties. They come from the author's `Autolabel/` scripts (see [R1_LOO_DATE.md](R1_LOO_DATE.md), BLD label source), which are not ported. Obtain them from the author.
 
 | File | Use | Size (bytes) | SHA-256 |
 |---|---|---|---|
@@ -80,6 +97,7 @@ All are EPSG:4326 polygons with `Class`, `date`, `spatial_block` and `train_elig
 | `<ROOT>/Asset/Unified_Holdout_20240514.geojson` | 20240514 hold-out | 3,104,767 | `024de2155a1dc709feabd60722df884ad2d5cb411cb7278dbbc4cc6af1743810` |
 | `<ROOT>/Asset/TrainingStage1.geojson` | Stage 1 training (HC / SND / RBL; undated) | 29,861 | `6ed77ff5ecee3f521052ee3a011a512e08d6f1dc6bca24e2d96d2436a9089df5` |
 | `<ROOT>/Asset/TestingStage1.geojson` | Stage 1 test | 9,489 | `a3b195dc910c79ac712a6b9b983e303c3ed36047d47f717f80773370604c2ae8` |
+| `<STABLESAND>` (`StableSand.geojson`) | R1 calibration: 36 hand-drawn stable-sand polygons (EPSG:4326, no reflectance) used to estimate the pooled sand-regression coefficients | 14,113 | `3b2457912222c686343904a44a8fd837508aab30b26c62971028af80589828a1` |
 
 ## 5. Frozen models (MATLAB TreeBagger objects)
 
@@ -109,6 +127,7 @@ These hold only aggregate numbers. The values they contain are in the paper and 
 | `scripts/run_py4_stage1.py`, `scripts/run_frozen_stage1.py`, `tests/test_stage1_parity.py` | Raw Source stack, Planet UDM2 scenes (`<RAW>`), Stage 1 model and report, Stage 1 GeoJSONs |
 | `scripts/run_py5.py`, `tests/test_mask_wave.py` | Baseline mask, Phase 9 class maps, raw Source stack |
 | `scripts/run_py6_*.py`, `run_py8_*.py`, `run_r1_*.py`, `tests/test_fixed_units.py` | Both Source stacks, baseline mask, label GeoJSONs, Stage 2 output. `run_r1_task2.py` also needs the ACA bathymetry and the Stage 1 report. |
+| `r1/revision_runner.py`, `r1/table3_retest.py` | Both Source stacks, the 8 surviving GLINT GeoTIFFs, reef mask, Stage 1 and Stage 2 label GeoJSONs, `<STABLESAND>` and the UDM2 flag files (all listed in `r1/revision_config.json`; the runner checks every hash before writing output). `table3_retest.py` also needs the completed revision run and the earlier ablation run (see `r1/README.md`). |
 
 **Every command except the data-free tests needs archived products that only the author can supply.** Planet scenes alone are not enough: the Source stacks, labels and frozen models were derived from them by steps whose original scripts or intermediate files are partly lost.
 
