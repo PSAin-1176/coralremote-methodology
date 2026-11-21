@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0 (unreleased; date set when tagged)
+## 1.0.0 (2026-11-21)
 
 ### R1 revision runner (`r1/`)
 - `r1/revision_runner.py` produces the R1 tables: re-estimated pooled StableSand OLS coefficients (0.381 and 0.374), true-reflectance Stage 1 features, the 20,460-pixel consensus mask, corrected-reflectance hierarchical Stage 2 (Tables 2, 4A, 4B and 5), seeds 0 to 2, the date-specific calibration policy, the June date-omission tests and the leave-one-polygon-out test (Supplement S1, S3 and S4).
