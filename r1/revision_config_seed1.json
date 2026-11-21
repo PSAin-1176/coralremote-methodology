@@ -1,0 +1,184 @@
+{
+  "selected_policy": "pooled",
+  "seed": 1,
+  "input_hashes": [
+    {
+      "path": "${CORALREMOTE_ROOT}/Source/SourceStack_CoregRawReflectance.mat",
+      "sha256": "53bc867d6e0375d3f90082fc87ac7be6fc03617d5bed525b972c5378659da02f",
+      "bytes": 560941970
+    },
+    {
+      "path": "${CORALREMOTE_ROOT}/Source/SourceStack_HedleyGlintReflectance.mat",
+      "sha256": "002e47e5bc025df43c52767c3bfe153f66ecc324eaf53fe756177deefe842a04",
+      "bytes": 581581649
+    },
+    {
+      "path": "${CORALREMOTE_A3_ROOT}/Phase2_Masking/run_20260401_102458/reef_mask.tif",
+      "sha256": "44320c4de1cb6024bbe2d851efa0c58b24cdb4ac27fadad70075a118879ddace",
+      "bytes": 31818
+    },
+    {
+      "path": "${CORALREMOTE_STABLESAND}",
+      "sha256": "3b2457912222c686343904a44a8fd837508aab30b26c62971028af80589828a1",
+      "bytes": 14113
+    },
+    {
+      "path": "${CORALREMOTE_ROOT}/Asset/TrainingStage1.geojson",
+      "sha256": "6ed77ff5ecee3f521052ee3a011a512e08d6f1dc6bca24e2d96d2436a9089df5",
+      "bytes": 29861
+    },
+    {
+      "path": "${CORALREMOTE_ROOT}/Asset/TestingStage1.geojson",
+      "sha256": "a3b195dc910c79ac712a6b9b983e303c3ed36047d47f717f80773370604c2ae8",
+      "bytes": 9489
+    },
+    {
+      "path": "${CORALREMOTE_ROOT}/Asset/stricklabel_Training_SpatialDefault.geojson",
+      "sha256": "d6135d530b35d9c30abeb8b6e0a02d222234a0f3c8cd06401fe99ef293b8b76d",
+      "bytes": 7270602
+    },
+    {
+      "path": "${CORALREMOTE_ROOT}/Asset/stricklabel_Testing_SpatialDefault.geojson",
+      "sha256": "d26b023e1b322589eb1cf8899e87185260c71e862d0a956282cecd96fa1c7e4e",
+      "bytes": 8005605
+    },
+    {
+      "path": "${CORALREMOTE_ROOT}/Asset/stricklabel_Holdout_20240514.geojson",
+      "sha256": "306ef02d8566e41782de5253e75e0d2c0ed21f17673894a2cd60a97b38958224",
+      "bytes": 3104337
+    },
+    {
+      "path": "${CORALREMOTE_ROOT}/Asset/Unified_Training_SpatialDefault.geojson",
+      "sha256": "f2b638ed2eae71fec60ff96a69c82db6eea83c4ccf82af6b659e13819e1c8ee6",
+      "bytes": 7271859
+    },
+    {
+      "path": "${CORALREMOTE_ROOT}/Asset/Unified_Testing_SpatialDefault.geojson",
+      "sha256": "e4be71bf71055c734dfd18a5d068b92154ba1e5f4f42d61f7514371cdaa1e3ee",
+      "bytes": 8006905
+    },
+    {
+      "path": "${CORALREMOTE_ROOT}/Asset/Unified_Holdout_20240514.geojson",
+      "sha256": "024de2155a1dc709feabd60722df884ad2d5cb411cb7278dbbc4cc6af1743810",
+      "bytes": 3104767
+    },
+    {
+      "path": "${CORALREMOTE_A3_ROOT}/Phase3_LogRatio/run_20260401_102508/GLINT_20230404.tif",
+      "sha256": "e58fd2f9d1609d885bde6d2a056d926193a5ee56eb9414e9b7e5b73fd5bfae81",
+      "bytes": 47264924
+    },
+    {
+      "path": "${CORALREMOTE_A3_ROOT}/Phase3_LogRatio/run_20260401_102508/GLINT_20230509.tif",
+      "sha256": "c28db91aa9c919ccf273e1b540d5eae230123df836713059e4698338aad42ad5",
+      "bytes": 47130040
+    },
+    {
+      "path": "${CORALREMOTE_A3_ROOT}/Phase3_LogRatio/run_20260401_102508/GLINT_20240307.tif",
+      "sha256": "8cdaf059befb9effb25555d10c1c3f95abc5135200a2749d89c2a4a1db45c9b3",
+      "bytes": 47117150
+    },
+    {
+      "path": "${CORALREMOTE_A3_ROOT}/Phase3_LogRatio/run_20260401_102508/GLINT_20240514.tif",
+      "sha256": "cd8572d4b740dc7c6e2dcf73fd9a46421a63b17324e17ebee5cc55ac6b09a287",
+      "bytes": 46410304
+    },
+    {
+      "path": "${CORALREMOTE_A3_ROOT}/Phase3_LogRatio/run_20260401_102508/GLINT_20240613.tif",
+      "sha256": "d2478d490021f1c7b9dbd4f629c219040ab986c2b0b069f43dab6ff3878fc45f",
+      "bytes": 46521746
+    },
+    {
+      "path": "${CORALREMOTE_A3_ROOT}/Phase3_LogRatio/run_20260401_102508/GLINT_20240620.tif",
+      "sha256": "47349d4d27859e081877217e6871a8da7f79800983cf7bc42855e3305cab96a4",
+      "bytes": 46344782
+    },
+    {
+      "path": "${CORALREMOTE_A3_ROOT}/Phase3_LogRatio/run_20260401_102508/GLINT_20240926.tif",
+      "sha256": "783102766120abd3ec91524a4f6f263cfdb2609c3469510ef3ccac8d8be82cfa",
+      "bytes": 47338076
+    },
+    {
+      "path": "${CORALREMOTE_A3_ROOT}/Phase3_LogRatio/run_20260401_102508/GLINT_20241111.tif",
+      "sha256": "d1ce2849d10411ee6986080e2feeb1b227d4a7774f631637292dc2710de5f356",
+      "bytes": 47355208
+    },
+    {
+      "path": "${REVISION_UDM}/udm2_20230404.npz",
+      "sha256": "3eaef3014ea13932bf7c4bf77cae21ee735c35bca112b04c19ea19f7b565ee86",
+      "bytes": 55853
+    },
+    {
+      "path": "${REVISION_UDM}/udm2_20230509.npz",
+      "sha256": "3f010f6008ac4d03d9964089da514cedb5e7bb9436484f81c353b49802455bc7",
+      "bytes": 76242
+    },
+    {
+      "path": "${REVISION_UDM}/udm2_20230519.npz",
+      "sha256": "5342b4a2b9df3c08e296f1df634a9484f41ac8ee2407b67259549e8c062beb67",
+      "bytes": 74467
+    },
+    {
+      "path": "${REVISION_UDM}/udm2_20230629.npz",
+      "sha256": "3592fae62ddd77f82fb10613ce8f933ee2db1b1dc7b75f1f07cddaf943fb6d2f",
+      "bytes": 168295
+    },
+    {
+      "path": "${REVISION_UDM}/udm2_20240307.npz",
+      "sha256": "fb062570acb19a782e8c4b29e9f1b3ab781e52a2a82579e1be4c63beefb27093",
+      "bytes": 69331
+    },
+    {
+      "path": "${REVISION_UDM}/udm2_20240317.npz",
+      "sha256": "04f73b1992d3a4122ff33aacb3a04476a8b5eb89b31c20372436534ab619b035",
+      "bytes": 73999
+    },
+    {
+      "path": "${REVISION_UDM}/udm2_20240408.npz",
+      "sha256": "2d4cb79b9cd7528cfb61249c7c53df01e541ce30de5129f4727824e7f564a210",
+      "bytes": 97905
+    },
+    {
+      "path": "${REVISION_UDM}/udm2_20241111.npz",
+      "sha256": "095b82316f36e2dd8104a95b433d500b15ec1cad6d1e17fe7ace1239954a590f",
+      "bytes": 48045
+    }
+  ],
+  "code_hashes": {
+    "revision_runner.py": "8e4e75db3ba20e16521bf90f6f8da2757f0d407baa142533c8ad690a9c85655c",
+    "legacy_replay.py": "32955db5c20a33ecf9e1f542155dbfb17748b9c349a89a14567a92efed3d049f",
+    "vendor/coralremote/cart.py": "65b928fb8db01cdf9ff21412e54ba7ce0a94c4a85f58f83f3e5a3b478546c283",
+    "vendor/coralremote/evaluate.py": "5811c57c56c37c452763f7e8ca2a75c5db0e93fcc73c13499812fa1f01120983",
+    "vendor/coralremote/features.py": "a1980d33e5488f69b29495151479b6b97b18484493e742ee83a8cb81446cfa50",
+    "vendor/coralremote/forest.py": "cc10b389b1a030bf5a500e97807615a779b1911b12f10a9d57aa1dba59427531",
+    "vendor/coralremote/io.py": "495c9d4104158751f9e1240be41527f7f6e34e91824951c86b495b8286cc0b90",
+    "vendor/coralremote/mask.py": "c996aee8a4923b1946f030eb40b7eb56c0d867f6cb2b0a4eead8c0c18584e1a9",
+    "vendor/coralremote/matlab_compat.py": "df27647e339c61f9990b342a275fb618e5ec2690e8f68505d79b53dc8094ab7a",
+    "vendor/coralremote/paths.py": "51d72b156b01e0c2362b478cefb9fd9559c1f93ab8d42a2a8ed5e8ee851720af",
+    "vendor/coralremote/preprocess.py": "f9b6d75fa544663fb9a65afc1292b1aadaa857401bf06240b220f26d1f4600ba",
+    "vendor/coralremote/rasterize.py": "747a198ed831c46d86d8822eb0e8af3c59ada223b07d428c66d0ae8dc1cf8755",
+    "vendor/coralremote/regression.py": "e8c2ec694f3fb636a71caaaaf1adfa28020c4f0297a39fa64f65b3c8585a8c16",
+    "vendor/coralremote/stage1.py": "0df5097e07a9a797c1bc7e4fd750a813d0b0c21f5fecb20fc3f51b947130c847",
+    "vendor/coralremote/stage2.py": "7b3e5b99c81dff80dd17f5f079adba7bf19faa79876a62650f266ef7bae2ec34",
+    "vendor/coralremote/train.py": "02966f6ed70b1756de728300563fd564d5f74756dcfded1eb14aeedc4a47b3e6",
+    "vendor/coralremote/units.py": "d921838528bd150a3937e75eb36ece8cc2a6385731e09bd902563aae83ca4eec",
+    "vendor/coralremote/wave.py": "57f350ea75cacb746fb814c7f4910ffb961ada0c1f56c227ebc6955b9fb907f3",
+    "vendor/coralremote/__init__.py": "b4edbde436298c5329c8c3724305e9a09c663cf45f37031dbeb48e926c70d0d5"
+  },
+  "data_root": "${CORALREMOTE_ROOT}",
+  "a3_root": "${CORALREMOTE_A3_ROOT}",
+  "udm_root": "${REVISION_UDM}",
+  "fixed_parameters": {
+    "Stage1_floor": 1e-06,
+    "calibration_floor": 0.0001,
+    "Stage2_floor_true_reflectance": 0.0001,
+    "NIR_filter_strict": [
+      0.005,
+      0.12
+    ],
+    "Stage1_trees": 200,
+    "Stage2_trees_each": 250
+  },
+  "scope": "Local release candidate; licensed prepared products not distributed",
+  "revision_id": "local-candidate-74777f670e754fbb",
+  "component_note": "Recorded seed component of the same three-seed configuration"
+}
