@@ -24,7 +24,7 @@ Paths in the configurations are placeholders. Set these environment variables be
 | `REVISION_PLAN` | Optional: a plan document whose hash is recorded in `manifest/design.json` |
 | `REVISION_RUN`, `REVISION_OLD_RUN`, `TABLE3_OUT` | `table3_retest.py` only: the completed revision run, the earlier exploratory ablation run (read for the spatial-CV column) and the output folder |
 
-The runner stops with a clear error if `CORALREMOTE_ROOT` is missing. Before any output is written, `primary` checks every input hash in the configuration and the code identity (`vendor/coralremote/*` entries are compared with this repository's `coralremote/*`; the recorded hashes of the two entry-point scripts predate the path edits and are reported, not enforced). Existing inconsistent caches are rejected.
+The runner stops with a clear error if `CORALREMOTE_ROOT` is missing. Before any output is written, `primary` checks every input hash in the configuration and the code identity (`vendor/coralremote/*` entries are compared with this repository's `coralremote/*`, and the two entry-point scripts with their released versions; code hashes use LF line endings, so Windows and Unix checkouts give the same result). Existing inconsistent caches are rejected.
 
 ## Commands
 

@@ -381,13 +381,11 @@ def run_loo():
 def preflight(config,cache=None):
     # All identity checks precede creation of scientific outputs.
     for rel,expected in config.get('code_hashes',{}).items():
-        # vendor/coralremote/* of the candidate package is byte-identical to this repository's coralremote/*.
-        # The two entry-point scripts were edited for the repository release (path handling only), so their
-        # recorded candidate hashes are reported, not enforced.
+        # vendor/coralremote/* entries of the run configuration name this repository's coralremote/* (byte-identical).
+        # The hashes of the two entry-point scripts are those of the released (path-templated) files.
+        # Code hashes use LF line endings, so Windows (CRLF) and Unix checkouts give the same identity.
         f=REPO/rel[len('vendor/'):] if rel.startswith('vendor/') else HERE/rel
-        if sha(f)!=expected:
-            if rel in ('revision_runner.py','legacy_replay.py'):log(f'NOTE: {rel} differs from the recorded candidate hash (release edit: path handling only)');continue
-            raise ValueError(f'Release code identity mismatch: {rel}')
+        if hashlib.sha256(f.read_bytes().replace(b'\r\n',b'\n')).hexdigest()!=expected:raise ValueError(f'Release code identity mismatch: {rel}')
     for rec in config['input_hashes']:
         p=Path(expand(rec['path']))
         if not p.exists():raise FileNotFoundError(f'Missing required licensed/prepared input: {p}')
