@@ -62,3 +62,4 @@ Merging plan/
 paths.local.json
 *.npy
 *.npz
+!r1/scenes.csv
